@@ -1,0 +1,35 @@
+name: libclang-windows-amd64
+
+on: [push, pull_request]
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: get llvm-project
+      run: |
+        choco install wget
+        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-9.0.1/llvm-project-9.0.1.tar.xz
+        $env:Path = "C:\Program Files\Git\usr\bin;$env:Path"
+        tar xf llvm-project-9.0.1.tar.xz --exclude=llvm-project-9.0.1/clang/test/Driver/Inputs* --exclude=llvm-project-9.0.1/libclc/amdgcn-mesa3d --exclude=llvm-project-9.0.1/libcxx/test/std/input.output/filesystems/Inputs/static_test_env/*
+    - name: make build directory
+      run: mkdir -p llvm-project-9.0.1/build
+    - name: cmake
+      run: cd llvm-project-9.0.1/build && cmake ../llvm -Thost=x64 -DLLVM_ENABLE_PROJECTS=clang -DBUILD_SHARED_LIBS=OFF -DLLVM_TARGETS_TO_BUILD=X86 -DCMAKE_CXX_FLAGS="/MP" -DLLVM_USE_CRT_MINSIZEREL="MT"
+    - name: build
+      run: cd llvm-project-9.0.1/build && cmake --build . --config MinSizeRel --target libclang
+    - name: rename output binary
+      run: |
+        mv llvm-project-9.0.1\build\MinSizeRel\bin\libclang.dll llvm-project-9.0.1\build\MinSizeRel\bin\libclang.dll.9.windows-amd64
+    - name: create and print sha512sum
+      run: |
+        $env:Path = "C:\Program Files\Git\usr\bin;$env:Path"
+        cd llvm-project-9.0.1\build\MinSizeRel\bin
+        sha512sum.exe libclang.dll.9.windows-amd64 > libclang.dll.9.windows-amd64.sha512sum
+        echo "Checksum is: "
+        Get-Content -Path libclang.dll.9.windows-amd64.sha512sum
+    - uses: actions/upload-artifact@v2
+      with:
+        name: libclang.dll.9.windows-amd64
+        path: llvm-project-9.0.1\build\MinSizeRel\bin\libclang.dll.9.windows-amd64
