@@ -24,6 +24,10 @@ platform = get_platform(None)
 
 
 class bdist_wheel_injected(bdist_wheel):
+    def finalize_options(self):
+        super(bdist_wheel_injected, self).finalize_options()
+        self.root_is_pure = True
+
     def run(self):
         global platform
         platform = self.plat_name
