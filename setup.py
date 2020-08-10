@@ -1,0 +1,97 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import os
+
+from distutils.command.build import build
+from distutils.dir_util import mkpath
+from setuptools import setup, find_packages, Extension
+from setuptools.command.build_ext import build_ext
+from wheel.bdist_wheel import get_platform, bdist_wheel
+
+
+def platform_ext(plat):
+    if 'linux' in plat:
+        return '.so'
+    if 'macosx' in plat:
+        return '.dylib'
+    if 'win' in plat:
+        return '.dll'
+    raise RuntimeError('Invalid platform value: %s' % plat)
+
+
+platform = get_platform(None)
+
+
+class bdist_wheel_injected(bdist_wheel):
+    def run(self):
+        global platform
+        platform = self.plat_name
+        super(bdist_wheel_injected, self).run()
+
+
+class CopyNativeExtension(Extension):
+    def __init__(self, name):
+        super(CopyNativeExtension, self).__init__(name, sources=[])
+
+
+class CopyNativeCommand(build_ext):
+    def run(self):
+        for ext in self.extensions:
+            source_dir = './native/'
+            target_dir = os.path.dirname(self.get_ext_fullpath(ext.name))
+            libname = 'libclang' + platform_ext(platform)
+            mkpath(target_dir)
+            self.copy_file(os.path.join(source_dir, libname),
+                           os.path.join(target_dir, libname))
+
+
+setup(
+    name='libclang',
+    version='9.0.1',
+    description='Clang Python Bindings.',
+    long_description='Clang Python Bindings, mirrored from the official LLVM repo: https://github.com/llvm/llvm-project/tree/master/clang/bindings/python, to make the installation process easier.',
+    author='Tao He',
+    author_email='sighingnow@gmail.com',
+    url='https://github.com/sighingnow/libclang',
+    license='MIT',
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        "Topic :: Software Development :: Compilers",
+        'Operating System :: MacOS :: MacOS X',
+        'Operating System :: Microsoft :: Windows',
+        'Operating System :: POSIX',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        "License :: OSI Approved :: Apache Software License",
+    ],
+    platforms='any',
+    keywords='Clang Python Bindings',
+
+    ext_modules=[CopyNativeExtension('clang.native.clang')],
+    cmdclass={
+        'build_ext': CopyNativeCommand,
+        'bdist_wheel': bdist_wheel_injected,
+    },
+
+    zip_safe=False,
+
+    package_dir={'': 'python'},
+    packages=find_packages('python'),
+
+    test_suite='python/tests',
+
+    project_urls={
+        'Documentation': 'https://libclang.readthedocs.io',
+        'Source': 'https://github.com/sighingonw/libclang',
+    },
+)
