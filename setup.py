@@ -52,7 +52,7 @@ class CopyNativeCommand(build_ext):
 
 setup(
     name='libclang',
-    version='9.0.1',
+    version='10.0.1',
     description='Clang Python Bindings.',
     long_description='Clang Python Bindings, mirrored from the official LLVM repo: https://github.com/llvm/llvm-project/tree/master/clang/bindings/python, to make the installation process easier.',
     author='Tao He',
