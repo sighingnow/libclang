@@ -14,24 +14,24 @@ jobs:
     - name: get llvm-project
       run: |
         choco install wget
-        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-%LLVM_VER%/llvm-project-%LLVM_VER%.tar.xz
+        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$env:LLVM_VER/llvm-project-$env:LLVM_VER.tar.xz
         $env:Path = "C:\Program Files\Git\usr\bin;$env:Path"
-        tar xf llvm-project-%LLVM_VER%.tar.xz --exclude=llvm-project-%LLVM_VER%/clang/test/Driver/Inputs* --exclude=llvm-project-%LLVM_VER%/libclc/amdgcn-mesa3d --exclude=llvm-project-%LLVM_VER%/libcxx/test/std/input.output/filesystems/Inputs/static_test_env/*
+        tar xf llvm-project-$env:LLVM_VER.tar.xz --exclude=llvm-project-$env:LLVM_VER/clang/test/Driver/Inputs* --exclude=llvm-project-$env:LLVM_VER/libclc/amdgcn-mesa3d --exclude=llvm-project-$env:LLVM_VER/libcxx/test/std/input.output/filesystems/Inputs/static_test_env/*
     - name: make build directory
-      run: mkdir -p llvm-project-%LLVM_VER%/build
+      run: mkdir -p llvm-project-$env:LLVM_VER/build
     - name: cmake
-      run: cd llvm-project-%LLVM_VER%/build && cmake ../llvm -Thost=x64 -DLLVM_ENABLE_PROJECTS=clang -DBUILD_SHARED_LIBS=OFF -DLLVM_TARGETS_TO_BUILD=X86 -DCMAKE_CXX_FLAGS="/MP" -DLLVM_USE_CRT_MINSIZEREL="MT"
+      run: cd llvm-project-$env:LLVM_VER/build && cmake ../llvm -Thost=x64 -DLLVM_ENABLE_PROJECTS=clang -DBUILD_SHARED_LIBS=OFF -DLLVM_TARGETS_TO_BUILD=X86 -DCMAKE_CXX_FLAGS="/MP" -DLLVM_USE_CRT_MINSIZEREL="MT"
     - name: build
-      run: cd llvm-project-%LLVM_VER%/build && cmake --build . --config MinSizeRel --target libclang
+      run: cd llvm-project-$env:LLVM_VER/build && cmake --build . --config MinSizeRel --target libclang
     - name: create and print sha512sum
       run: |
         $env:Path = "C:\Program Files\Git\usr\bin;$env:Path"
-        cd llvm-project-%LLVM_VER%\build\MinSizeRel\bin
-        sha512sum.exe libclang.dll > libclang.dll.%LLVM_VER%.windows-amd64.sha512sum
+        cd llvm-project-$env:LLVM_VER\build\MinSizeRel\bin
+        sha512sum.exe libclang.dll > libclang.dll.$env:LLVM_VER.windows-amd64.sha512sum
         echo "Checksum is: "
-        Get-Content -Path libclang.dll.%LLVM_VER%.windows-amd64.sha512sum
-        tar zcvf libclang.dll.%LLVM_VER%.windows-amd64.tar.gz libclang.dll libclang.dll.%LLVM_VER%.windows-amd64.sha512sum
+        Get-Content -Path libclang.dll.$env:LLVM_VER.windows-amd64.sha512sum
+        tar zcvf libclang.dll.$env:LLVM_VER.windows-amd64.tar.gz libclang.dll libclang.dll.$env:LLVM_VER.windows-amd64.sha512sum
     - uses: actions/upload-artifact@v2
       with:
-        name: libclang.dll.%LLVM_VER%.windows-amd64.tar.gz
-        path: llvm-project-%LLVM_VER%\build\MinSizeRel\bin\libclang.dll.%LLVM_VER%.windows-amd64.tar.gz
+        name: libclang.dll.$env:LLVM_VER.windows-amd64.tar.gz
+        path: llvm-project-$env:LLVM_VER\build\MinSizeRel\bin\libclang.dll.$env:LLVM_VER.windows-amd64.tar.gz
