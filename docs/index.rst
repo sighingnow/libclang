@@ -1,5 +1,5 @@
-:Date: 2020-08-07
-:Version: 10.0.1
+:Date: 2020-10-24
+:Version: 11.0.0
 :Authors: - LLVM Team
 
 .. meta::
