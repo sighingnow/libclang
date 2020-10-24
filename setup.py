@@ -49,12 +49,15 @@ class CopyNativeCommand(build_ext):
             self.copy_file(os.path.join(source_dir, libname),
                            os.path.join(target_dir, libname))
 
+with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.md'), encoding='utf-8', mode='r') as fp:
+    long_description = fp.read()
 
 setup(
     name='libclang',
-    version='10.0.1',
-    description='Clang Python Bindings.',
-    long_description='Clang Python Bindings, mirrored from the official LLVM repo: https://github.com/llvm/llvm-project/tree/master/clang/bindings/python, to make the installation process easier.',
+    version='11.0.0',
+    description='Clang Python Bindings, mirrored from the official LLVM repo: https://github.com/llvm/llvm-project/tree/master/clang/bindings/python, to make the installation process easier.',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     author='Tao He',
     author_email='sighingnow@gmail.com',
     url='https://github.com/sighingnow/libclang',
@@ -96,6 +99,7 @@ setup(
 
     project_urls={
         'Documentation': 'https://libclang.readthedocs.io',
-        'Source': 'https://github.com/sighingonw/libclang',
+        'Source': 'https://github.com/sighingnow/libclang',
+        'Tracker': 'https://github.com/sighingnow/libclang/issues',
     },
 )

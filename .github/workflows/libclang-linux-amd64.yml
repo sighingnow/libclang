@@ -2,6 +2,9 @@ name: libclang-linux-amd64
 
 on: [push, pull_request]
 
+env:
+  LLVM_VER: 11.0.0
+
 jobs:
   build-and-deploy:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
@@ -10,27 +13,24 @@ jobs:
     - uses: actions/checkout@v2
     - name: get llvm-project
       run: |
-        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.1/llvm-project-10.0.1.tar.xz
-        tar xf llvm-project-10.0.1.tar.xz
+        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VER/llvm-project-$LLVM_VER.tar.xz
+        tar xf llvm-project-$LLVM_VER.tar.xz
     - name: make build directory
-      run: mkdir -p llvm-project-10.0.1/build
+      run: mkdir -p llvm-project-$LLVM_VER/build
     - name: cmake
-      run: cd llvm-project-10.0.1/build && cmake ../llvm -DLLVM_ENABLE_PROJECTS=clang -DBUILD_SHARED_LIBS=OFF -DLLVM_TARGETS_TO_BUILD=X86 -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_CXX_FLAGS_MINSIZEREL="-Os -DNDEBUG -static-libgcc -static-libstdc++ -s" -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_C_COMPILER=gcc-8
+      run: cd llvm-project-$LLVM_VER/build && cmake ../llvm -DLLVM_ENABLE_PROJECTS=clang -DBUILD_SHARED_LIBS=OFF -DLLVM_TARGETS_TO_BUILD=X86 -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_CXX_FLAGS_MINSIZEREL="-Os -DNDEBUG -static-libgcc -static-libstdc++ -s" -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_C_COMPILER=gcc-8
     - name: build
-      run: cd llvm-project-10.0.1/build && make libclang -j$(nproc)
+      run: cd llvm-project-$LLVM_VER/build && make libclang -j$(nproc)
     - name: print dependencies
-      run: ldd llvm-project-10.0.1/build/lib/libclang.so
-    - name: rename output binary
-      run: |
-        cd llvm-project-10.0.1/build/lib
-        mv libclang.so libclang.so.10.linux-amd64
+      run: ldd llvm-project-$LLVM_VER/build/lib/libclang.so
     - name: create and print sha512sum
       run: |
-        cd llvm-project-10.0.1/build/lib
-        sha512sum libclang.so.10.linux-amd64 > libclang.so.10.linux-amd64.sha512sum
+        cd llvm-project-$LLVM_VER/build/lib
+        sha512sum libclang.so > libclang.so.$LLVM_VER.linux-amd64.sha512sum
         echo "Checksum is: "
-        cat libclang.so.10.linux-amd64.sha512sum
+        cat libclang.so.$LLVM_VER.linux-amd64.sha512sum
+        tar zcvfh libclang.so.$LLVM_VER.linux-amd64.tar.gz libclang.so libclang.so.$LLVM_VER.linux-amd64.sha512sum
     - uses: actions/upload-artifact@v2
       with:
-        name: libclang.so.10.linux-amd64
-        path: llvm-project-10.0.1/build/lib/libclang.so.10.linux-amd64
+        name: libclang.so.${{env.LLVM_VER}}.linux-amd64.tar.gz
+        path: llvm-project-${{env.LLVM_VER}}/build/lib/libclang.so.${{env.LLVM_VER}}.linux-amd64.tar.gz
