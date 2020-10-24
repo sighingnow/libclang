@@ -32,5 +32,5 @@ jobs:
         tar zcvf libclang.so.$LLVM_VER.linux-amd64.tar.gz libclang.so libclang.so.$LLVM_VER.linux-amd64.sha512sum
     - uses: actions/upload-artifact@v2
       with:
-        name: libclang.so.$LLVM_VER.linux-amd64.tar.gz
-        path: llvm-project-$LLVM_VER/build/lib/libclang.so.$LLVM_VER.linux-amd64.tar.gz
+        name: libclang.so.${{env.LLVM_VER}}.linux-amd64.tar.gz
+        path: llvm-project-${{env.LLVM_VER}}/build/lib/libclang.so.${{env.LLVM_VER}}.linux-amd64.tar.gz

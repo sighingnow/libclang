@@ -33,5 +33,5 @@ jobs:
         tar zcvf libclang.dll.$env:LLVM_VER.windows-amd64.tar.gz libclang.dll libclang.dll.$env:LLVM_VER.windows-amd64.sha512sum
     - uses: actions/upload-artifact@v2
       with:
-        name: libclang.dll.$env:LLVM_VER.windows-amd64.tar.gz
-        path: llvm-project-$env:LLVM_VER\build\MinSizeRel\bin\libclang.dll.$env:LLVM_VER.windows-amd64.tar.gz
+        name: libclang.dll.${{env.LLVM_VER}}.windows-amd64.tar.gz
+        path: llvm-project-${{env.LLVM_VER}}\build\MinSizeRel\bin\libclang.dll.${{env.LLVM_VER}}.windows-amd64.tar.gz

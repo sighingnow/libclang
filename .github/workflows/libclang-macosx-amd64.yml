@@ -32,5 +32,5 @@ jobs:
         tar zcvf libclang.dylib.$LLVM_VER.macosx-amd64.tar.gz libclang.dylib libclang.dylib.$LLVM_VER.macosx-amd64.sha512sum
     - uses: actions/upload-artifact@v2
       with:
-        name: libclang.dylib.$LLVM_VER.macosx-amd64.tar.gz
-        path: llvm-project-$LLVM_VER/build/lib/libclang.dylib.$LLVM_VER.macosx-amd64.tar.gz
+        name: libclang.dylib.${{env.LLVM_VER}}.macosx-amd64.tar.gz
+        path: llvm-project-${{env.LLVM_VER}}/build/lib/libclang.dylib.${{env.LLVM_VER}}.macosx-amd64.tar.gz
