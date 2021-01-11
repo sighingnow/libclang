@@ -31,6 +31,7 @@ jobs:
         echo "Checksum is: "
         Get-Content -Path libclang.dll.$env:LLVM_VER.windows-amd64.sha512sum
         tar zcvf libclang.dll.$env:LLVM_VER.windows-amd64.tar.gz libclang.dll libclang.dll.$env:LLVM_VER.windows-amd64.sha512sum
+        sha512sum.exe libclang.dll.$env:LLVM_VER.windows-amd64.tar.gz
     - uses: actions/upload-artifact@v2
       with:
         name: libclang.dll.${{env.LLVM_VER}}.windows-amd64.tar.gz

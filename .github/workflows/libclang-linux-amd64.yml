@@ -30,6 +30,7 @@ jobs:
         echo "Checksum is: "
         cat libclang.so.$LLVM_VER.linux-amd64.sha512sum
         tar zcvfh libclang.so.$LLVM_VER.linux-amd64.tar.gz libclang.so libclang.so.$LLVM_VER.linux-amd64.sha512sum
+        shasum -a512 libclang.so.$LLVM_VER.linux-amd64.tar.gz
     - uses: actions/upload-artifact@v2
       with:
         name: libclang.so.${{env.LLVM_VER}}.linux-amd64.tar.gz
