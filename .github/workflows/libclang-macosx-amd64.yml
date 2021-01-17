@@ -11,6 +11,9 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
+    - name: install gnu-tar
+      run: |
+        brew install gnu-tar
     - name: get llvm-project
       run: |
         wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VER/llvm-project-$LLVM_VER.tar.xz
@@ -29,7 +32,7 @@ jobs:
         shasum -a512 libclang.dylib > libclang.dylib.$LLVM_VER.macosx-amd64.sha512sum
         echo "Checksum is: "
         cat libclang.dylib.$LLVM_VER.macosx-amd64.sha512sum
-        tar zcvf libclang.dylib.$LLVM_VER.macosx-amd64.tar.gz libclang.dylib libclang.dylib.$LLVM_VER.macosx-amd64.sha512sum
+        gtar zcvf libclang.dylib.$LLVM_VER.macosx-amd64.tar.gz libclang.dylib libclang.dylib.$LLVM_VER.macosx-amd64.sha512sum
         shasum -a512 libclang.dylib.$LLVM_VER.macosx-amd64.tar.gz
     - uses: actions/upload-artifact@v2
       with:
