@@ -1,6 +1,6 @@
-:Date: 2020-10-24
-:Version: 11.0.0
-:Authors: - LLVM Team
+:Date: 2021-03-12
+:Version: 11.1.0
+:Authors: - The LLVM Team
 
 .. meta::
    :http-equiv=Content-Type: text/html; charset=utf-8
@@ -8,4 +8,4 @@
    :description lang=en: Clang Python Bindings.
 
 .. automodule:: clang.cindex
-    :members: 
+    :members:

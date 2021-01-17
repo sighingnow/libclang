@@ -3,7 +3,7 @@ name: libclang-windows-amd64
 on: [push, pull_request]
 
 env:
-  LLVM_VER: 11.0.1
+  LLVM_VER: 11.1.0
 
 jobs:
   build-and-deploy:
