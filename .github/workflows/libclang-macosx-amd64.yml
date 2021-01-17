@@ -16,8 +16,9 @@ jobs:
         brew install gnu-tar
     - name: get llvm-project
       run: |
-        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VER/llvm-project-$LLVM_VER.tar.xz
-        tar xf llvm-project-$LLVM_VER.tar.xz
+        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VER/llvm-project-$LLVM_VER.src.tar.xz
+        tar xf llvm-project-$LLVM_VER.src.tar.xz
+        mv llvm-project-$LLVM_VER.src llvm-project-$LLVM_VER
     - name: make build directory
       run: mkdir -p llvm-project-$LLVM_VER/build
     - name: cmake
