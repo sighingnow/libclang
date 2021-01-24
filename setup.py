@@ -61,7 +61,7 @@ setup(
     author='Tao He',
     author_email='sighingnow@gmail.com',
     url='https://github.com/sighingnow/libclang',
-    license='MIT',
+    license='Apache License 2.0',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
