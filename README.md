@@ -39,8 +39,7 @@ Update class variable `library_path` of `Config` in `cindex.py` as:
 License
 -------
 
-This repository follows the license agreement of the LLVM project, see [./LICENSE.TXT]
-(Apache-2.0 WITH LLVM-exception).
+This repository follows the license agreement of the LLVM project, see [Apache-2.0 WITH LLVM-exception](./LICENSE.TXT).
 
 [1]: https://github.com/llvm/llvm-project/tree/master/clang/bindings/python
 [2]: https://pypi.org/project/libclang
