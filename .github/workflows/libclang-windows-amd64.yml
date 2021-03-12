@@ -13,11 +13,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: get llvm-project
       run: |
-        choco install wget
-        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$env:LLVM_VER/llvm-project-$env:LLVM_VER.src.tar.xz
-        $env:Path = "C:\Program Files\Git\usr\bin;$env:Path"
-        tar xf llvm-project-$env:LLVM_VER.src.tar.xz --dereference --exclude=llvm-project-$env:LLVM_VER/clang/test/Driver/Inputs* --exclude=llvm-project-$env:LLVM_VER/libclc/amdgcn-mesa3d --exclude=llvm-project-$env:LLVM_VER/libcxx/test/std/input.output/filesystems/Inputs/static_test_env/*
-        Rename-Item llvm-project-$env:LLVM_VER.src llvm-project-$env:LLVM_VER
+        choco install wget git
+        git clone https://github.com/llvm/llvm-project.git llvm-project-$env:LLVM_VER -b llvmorg-$env:LLVM_VER --depth=1
     - name: make build directory
       run: mkdir -p llvm-project-$env:LLVM_VER/build
     - name: cmake
