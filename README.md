@@ -41,5 +41,5 @@ License
 
 This repository follows the license agreement of the LLVM project, see [Apache-2.0 WITH LLVM-exception](./LICENSE.TXT).
 
-[1]: https://github.com/llvm/llvm-project/tree/master/clang/bindings/python
+[1]: https://github.com/llvm/llvm-project/tree/main/clang/bindings/python
 [2]: https://pypi.org/project/libclang
