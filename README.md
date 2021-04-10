@@ -24,8 +24,11 @@ available for more Python users, without setup the LLVM environment. To install 
 you just need to run
 
 ```bash
-pip install clang
+pip install libclang
 ```
+
+Note that the library is named `libclang`, the package `clang` on PyPi is another package and
+doesn't bundle the prebuilt shared library.
 
 Internals
 ---------
