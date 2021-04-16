@@ -3,7 +3,7 @@ name: libclang-linux-amd64
 on: [push, pull_request]
 
 env:
-  LLVM_VER: 11.1.0
+  LLVM_VER: 12.0.0
 
 jobs:
   build-and-deploy:
