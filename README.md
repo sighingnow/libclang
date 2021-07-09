@@ -1,14 +1,17 @@
 libclang-for-pip
 ================
 
-![PyPI](https://img.shields.io/pypi/v/libclang)
+[![PyPI](https://img.shields.io/pypi/v/libclang)](https://pypi.org/project/libclang)
 ![Python](https://img.shields.io/pypi/pyversions/libclang)
 ![Downloads](https://img.shields.io/pypi/dw/libclang)
-![License](https://img.shields.io/pypi/l/libclang)
+[![License](https://img.shields.io/pypi/l/libclang)](https://github.com/sighingnow/libclang/blob/master/LICENSE.TXT)
 
-![Linux](https://github.com/sighingnow/libclang/workflows/libclang-linux-amd64/badge.svg)
-![MacOS](https://github.com/sighingnow/libclang/workflows/libclang-macosx-amd64/badge.svg)
-![Windows](https://github.com/sighingnow/libclang/workflows/libclang-windows-amd64/badge.svg)
+[![Arch: x86\_64](https://img.shields.io/badge/arch-x86__64-brightgreen)](https://pypi.org/project/libclang/#files)
+[![Arch: aarch64](https://img.shields.io/badge/arch-aarch64-yellowgreen)](https://pypi.org/project/libclang/#files)
+
+[![Linux](https://github.com/sighingnow/libclang/workflows/libclang-linux-amd64/badge.svg)](https://github.com/sighingnow/libclang/actions/workflows/libclang-linux-amd64.yml)
+[![MacOS](https://github.com/sighingnow/libclang/workflows/libclang-macosx-amd64/badge.svg)](https://github.com/sighingnow/libclang/actions/workflows/libclang-macosx-amd64.yml)
+[![Windows](https://github.com/sighingnow/libclang/workflows/libclang-windows-amd64/badge.svg)](https://github.com/sighingnow/libclang/actions/workflows/libclang-windows-amd64.yml)
 
 The repository contains code that taken from [the LLVM project][1], to make it easier to install
 clang's python bindings.
