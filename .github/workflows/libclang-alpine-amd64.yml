@@ -21,9 +21,6 @@ jobs:
     - name: pull docker
       run: |
         sudo docker pull frolvlad/alpine-gxx
-    - name: Setup tmate session debug
-      if: true
-      uses: mxschmitt/action-tmate@v2
     - name: cmake & build in docker
       run: |
         cp .github/script-to-build-alpine.sh ./llvm-project-$LLVM_VER/

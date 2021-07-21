@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sudo docker run --privileged --network=host --rm -it -v `pwd`:/work frolvlad/alpine-gxx \
+sudo docker run --privileged --network=host --rm -v `pwd`:/work frolvlad/alpine-gxx \
             sh -c 'apk add python3 cmake make && \
                    mkdir -p /work/build && \
                    cd /work/build && \
