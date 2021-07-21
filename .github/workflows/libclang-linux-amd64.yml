@@ -23,7 +23,9 @@ jobs:
     - name: build
       run: cd llvm-project-$LLVM_VER/build && make libclang -j$(nproc)
     - name: print dependencies
-      run: ldd llvm-project-$LLVM_VER/build/lib/libclang.so
+      run: |
+        file llvm-project-$LLVM_VER/build/lib/libclang.so
+        ldd llvm-project-$LLVM_VER/build/lib/libclang.so
     - name: create and print sha512sum
       run: |
         cd llvm-project-$LLVM_VER/build/lib

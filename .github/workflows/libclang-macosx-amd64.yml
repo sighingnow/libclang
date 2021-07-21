@@ -26,7 +26,9 @@ jobs:
     - name: build
       run: cd llvm-project-$LLVM_VER/build && make libclang -j$(sysctl -n hw.ncpu)
     - name: print dependencies
-      run: otool -L llvm-project-$LLVM_VER/build/lib/libclang.dylib
+      run: |
+        file llvm-project-$LLVM_VER/build/lib/libclang.dylib
+        otool -L llvm-project-$LLVM_VER/build/lib/libclang.dylib
     - name: create and print sha512sum
       run: |
         cd llvm-project-$LLVM_VER/build/lib
