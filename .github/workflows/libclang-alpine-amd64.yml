@@ -1,0 +1,43 @@
+name: libclang-alpine-amd64
+
+on: [push, pull_request]
+
+env:
+  LLVM_VER: 12.0.0
+
+jobs:
+  build-and-deploy:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: get llvm-project
+      run: |
+        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VER/llvm-project-$LLVM_VER.src.tar.xz
+        tar xf llvm-project-$LLVM_VER.src.tar.xz
+        mv llvm-project-$LLVM_VER.src llvm-project-$LLVM_VER
+    - name: make build directory
+      run: mkdir -p llvm-project-$LLVM_VER/build
+    - name: pull docker
+      run: |
+        sudo docker pull frolvlad/alpine-gxx
+    - name: cmake & build in docker
+      run: |
+        cp .github/script-to-build-alpine.sh ./llvm-project-$LLVM_VER/
+        cd llvm-project-$LLVM_VER
+        bash ./script-to-build-alpine.sh
+    - name: print dependencies
+      run: |
+        file llvm-project-$LLVM_VER/build/lib/libclang.so
+    - name: create and print sha512sum
+      run: |
+        cd llvm-project-$LLVM_VER/build/lib
+        sha512sum libclang.so > libclang.so.$LLVM_VER.alpine-amd64.sha512sum
+        echo "Checksum is: "
+        cat libclang.so.$LLVM_VER.alpine-amd64.sha512sum
+        tar zcvfh libclang.so.$LLVM_VER.alpine-amd64.tar.gz libclang.so libclang.so.$LLVM_VER.alpine-amd64.sha512sum
+        shasum -a512 libclang.so.$LLVM_VER.alpine-amd64.tar.gz
+    - uses: actions/upload-artifact@v2
+      with:
+        name: libclang.so.${{env.LLVM_VER}}.alpine-amd64.tar.gz
+        path: llvm-project-${{env.LLVM_VER}}/build/lib/libclang.so.${{env.LLVM_VER}}.alpine-amd64.tar.gz
