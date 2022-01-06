@@ -1,5 +1,5 @@
 :Date: 2021-04-17
-:Version: 12.0.0
+:Version: 13.0.0
 :Authors: - The LLVM Team
 
 .. meta::
