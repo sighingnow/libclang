@@ -1,4 +1,4 @@
-name: libclang-linux-aarch64
+name: libclang-linux-arm
 
 on: [push, pull_request]
 
@@ -15,9 +15,9 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y \
-          binutils-aarch64-linux-gnu \
-          g++-7-aarch64-linux-gnu \
-          gcc-7-aarch64-linux-gnu \
+          binutils-arm-linux-gnueabihf \
+          g++-7-arm-linux-gnueabihf \
+          gcc-7-arm-linux-gnueabihf \
     - name: get llvm-project
       run: |
         wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VER/llvm-project-$LLVM_VER.src.tar.xz
@@ -33,13 +33,15 @@ jobs:
           -DBUILD_SHARED_LIBS=OFF \
           -DLLVM_ENABLE_TERMINFO=OFF \
           -DCMAKE_SYSTEM_NAME=Linux \
-          -DLLVM_DEFAULT_TARGET_TRIPLE=aarch64-linux-gnu \
-          -DLLVM_TARGET_ARCH=AArch64 \
-          -DLLVM_TARGETS_TO_BUILD=AArch64 \
+          -DLLVM_DEFAULT_TARGET_TRIPLE=arm-linux-gnueabihf \
+          -DLLVM_TARGET_ARCH=ARM \
+          -DLLVM_TARGETS_TO_BUILD=ARM \
           -DCMAKE_BUILD_TYPE=MinSizeRel \
           -DCMAKE_CXX_FLAGS_MINSIZEREL="-Os -DNDEBUG -static-libgcc -static-libstdc++ -s" \
-          -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc-7 \
-          -DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++-7
+          -DCMAKE_C_FLAGS="-march=armv7" \
+          -DCMAKE_CXX_FLAGS="-march=armv7" \
+          -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc-7 \
+          -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++-7
     - name: build
       run: cd llvm-project-$LLVM_VER/build && make libclang -j$(nproc)
     - name: print dependencies
@@ -48,12 +50,12 @@ jobs:
     - name: create and print sha512sum
       run: |
         cd llvm-project-$LLVM_VER/build/lib
-        sha512sum libclang.so > libclang.so.$LLVM_VER.linux-aarch64.sha512sum
+        sha512sum libclang.so > libclang.so.$LLVM_VER.linux-arm.sha512sum
         echo "Checksum is: "
-        cat libclang.so.$LLVM_VER.linux-aarch64.sha512sum
-        tar zcvfh libclang.so.$LLVM_VER.linux-aarch64.tar.gz libclang.so libclang.so.$LLVM_VER.linux-aarch64.sha512sum
-        shasum -a512 libclang.so.$LLVM_VER.linux-aarch64.tar.gz
+        cat libclang.so.$LLVM_VER.linux-arm.sha512sum
+        tar zcvfh libclang.so.$LLVM_VER.linux-arm.tar.gz libclang.so libclang.so.$LLVM_VER.linux-arm.sha512sum
+        shasum -a512 libclang.so.$LLVM_VER.linux-arm.tar.gz
     - uses: actions/upload-artifact@v2
       with:
-        name: libclang.so.${{env.LLVM_VER}}.linux-aarch64.tar.gz
-        path: llvm-project-${{env.LLVM_VER}}/build/lib/libclang.so.${{env.LLVM_VER}}.linux-aarch64.tar.gz
+        name: libclang.so.${{env.LLVM_VER}}.linux-arm.tar.gz
+        path: llvm-project-${{env.LLVM_VER}}/build/lib/libclang.so.${{env.LLVM_VER}}.linux-arm.tar.gz
