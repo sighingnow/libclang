@@ -11,6 +11,11 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
+    - name: get llvm-project
+      run: |
+        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VER/llvm-project-$LLVM_VER.src.tar.xz
+        tar xf llvm-project-$LLVM_VER.src.tar.xz
+        mv llvm-project-$LLVM_VER.src llvm-project-$LLVM_VER
     - name: install cross compilation toolchain
       run: |
         sudo apt-get update
@@ -18,11 +23,23 @@ jobs:
           binutils-aarch64-linux-gnu \
           g++-7-aarch64-linux-gnu \
           gcc-7-aarch64-linux-gnu \
-    - name: get llvm-project
+    - name: build host llvmtblgen/clangtblgen
       run: |
-        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VER/llvm-project-$LLVM_VER.src.tar.xz
-        tar xf llvm-project-$LLVM_VER.src.tar.xz
-        mv llvm-project-$LLVM_VER.src llvm-project-$LLVM_VER
+        mkdir llvm-project-$LLVM_VER/build-host
+        cd llvm-project-$LLVM_VER/build-host
+        cmake ../llvm \
+          -DLLVM_ENABLE_PROJECTS=clang \
+          -DBUILD_SHARED_LIBS=OFF \
+          -DLLVM_ENABLE_TERMINFO=OFF \
+          -DLLVM_TARGETS_TO_BUILD=X86 \
+          -DCMAKE_BUILD_TYPE=MinSizeRel \
+          -DCMAKE_CXX_FLAGS_MINSIZEREL="-Os -DNDEBUG -static-libgcc -static-libstdc++ -s" \
+          -DCMAKE_C_COMPILER=gcc-7 \
+          -DCMAKE_CXX_COMPILER=g++-7
+        make clang-tblgen llvm-tblgen -j$(nproc)
+
+        # copy the artifacts to an absolute path
+        sudo cp ./bin/* /usr/bin/
     - name: make build directory
       run: mkdir -p llvm-project-$LLVM_VER/build
     - name: cmake
@@ -36,6 +53,8 @@ jobs:
           -DLLVM_DEFAULT_TARGET_TRIPLE=aarch64-linux-gnu \
           -DLLVM_TARGET_ARCH=AArch64 \
           -DLLVM_TARGETS_TO_BUILD=AArch64 \
+          -DLLVM_TABLEGEN=/usr/bin/llvm-tblgen \
+          -DCLANG_TABLEGEN=/usr/bin/clang-tblgen \
           -DCMAKE_BUILD_TYPE=MinSizeRel \
           -DCMAKE_CXX_FLAGS_MINSIZEREL="-Os -DNDEBUG -static-libgcc -static-libstdc++ -s" \
           -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc-7 \

@@ -20,14 +20,7 @@ jobs:
     - name: cmake
       run: |
         cd llvm-project-$env:LLVM_VER/build
-        cmake ../llvm \
-          -Thost=x64 \
-          -DLLVM_ENABLE_PROJECTS=clang \
-          -DBUILD_SHARED_LIBS=OFF \
-          -DLLVM_ENABLE_TERMINFO=OFF \
-          -DLLVM_TARGETS_TO_BUILD=X86 \
-          -DCMAKE_CXX_FLAGS="/MP" \
-          -DLLVM_USE_CRT_MINSIZEREL="MT"
+        cmake ../llvm -Thost=x64 -DLLVM_ENABLE_PROJECTS=clang -DBUILD_SHARED_LIBS=OFF -DLLVM_ENABLE_TERMINFO=OFF -DLLVM_TARGETS_TO_BUILD=X86 -DCMAKE_CXX_FLAGS="/MP" -DLLVM_USE_CRT_MINSIZEREL="MT"
     - name: build
       run: cd llvm-project-$env:LLVM_VER/build && cmake --build . --config MinSizeRel --target libclang
     - name: create and print sha512sum
