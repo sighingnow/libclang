@@ -8,10 +8,14 @@ libclang-for-pip
 
 [![Arch: x86\_64](https://img.shields.io/badge/arch-x86__64-brightgreen)](https://pypi.org/project/libclang/#files)
 [![Arch: aarch64](https://img.shields.io/badge/arch-aarch64-yellowgreen)](https://pypi.org/project/libclang/#files)
+[![Arch: arm](https://img.shields.io/badge/arch-arm-orange)](https://pypi.org/project/libclang/#files)
 
+[![Windows](https://github.com/sighingnow/libclang/workflows/libclang-windows-amd64/badge.svg)](https://github.com/sighingnow/libclang/actions/workflows/libclang-windows-amd64.yml)
 [![Linux](https://github.com/sighingnow/libclang/workflows/libclang-linux-amd64/badge.svg)](https://github.com/sighingnow/libclang/actions/workflows/libclang-linux-amd64.yml)
 [![MacOS](https://github.com/sighingnow/libclang/workflows/libclang-macosx-amd64/badge.svg)](https://github.com/sighingnow/libclang/actions/workflows/libclang-macosx-amd64.yml)
-[![Windows](https://github.com/sighingnow/libclang/workflows/libclang-windows-amd64/badge.svg)](https://github.com/sighingnow/libclang/actions/workflows/libclang-windows-amd64.yml)
+[![Linux Arm](https://github.com/sighingnow/libclang/workflows/libclang-linux-arm/badge.svg)](https://github.com/sighingnow/libclang/actions/workflows/libclang-linux-arm.yml)
+[![Linux AArch64](https://github.com/sighingnow/libclang/workflows/libclang-linux-aarch64/badge.svg)](https://github.com/sighingnow/libclang/actions/workflows/libclang-linux-aarch64.yml)
+[![Linux Alpine](https://github.com/sighingnow/libclang/workflows/libclang-alpine-amd64/badge.svg)](https://github.com/sighingnow/libclang/actions/workflows/libclang-alpine-amd64.yml)
 
 The repository contains code that taken from [the LLVM project][1], to make it easier to install
 clang's python bindings.
