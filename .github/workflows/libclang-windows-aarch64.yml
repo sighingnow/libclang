@@ -1,0 +1,66 @@
+name: libclang-windows-aarch64
+
+on: [push, pull_request]
+
+env:
+  LLVM_VER: 13.0.0
+
+jobs:
+  build-and-deploy:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: get llvm-project
+      run: |
+        choco install wget git
+        git clone https://github.com/llvm/llvm-project.git llvm-project-$env:LLVM_VER -b llvmorg-$env:LLVM_VER --depth=1
+    - name: build host llvm-tblgen/clang-tblgen
+      run: |
+        mkdir llvm-project-$env:LLVM_VER/build-host
+        cd llvm-project-$env:LLVM_VER/build-host
+        cmake ../llvm `
+          -Thost=x64 `
+          -DLLVM_ENABLE_PROJECTS=clang `
+          -DBUILD_SHARED_LIBS=OFF `
+          -DLLVM_ENABLE_TERMINFO=OFF `
+          -DLLVM_TARGETS_TO_BUILD=X86 `
+          -DCMAKE_BUILD_TYPE=MinSizeRel `
+          -DCMAKE_CXX_FLAGS="/MP" `
+          -DLLVM_USE_CRT_MINSIZEREL="MT"
+        cmake --build . --config MinSizeRel --target clang-tblgen
+        cmake --build . --config MinSizeRel --target llvm-tblgen
+        cd MinSizeRel
+        mkdir C:\llvm
+        cp bin\clang-tblgen.exe C:\llvm
+        cp bin\llvm-tblgen.exe C:\llvm
+    - name: cmake
+      run: |
+        mkdir -p llvm-project-$env:LLVM_VER/build
+        cd llvm-project-$env:LLVM_VER/build
+        cmake ../llvm `
+            -A ARM64 `
+            -Thost=x64 `
+            -DLLVM_ENABLE_PROJECTS=clang `
+            -DBUILD_SHARED_LIBS=OFF `
+            -DLLVM_ENABLE_TERMINFO=OFF `
+            -DLLVM_TARGETS_TO_BUILD=AArch64 `
+            -DLLVM_TABLEGEN=C:\llvm\llvm-tblgen.exe `
+            -DCLANG_TABLEGEN=C:\llvm\clang-tblgen.exe `
+            -DCMAKE_CXX_FLAGS="/MP" `
+            -DLLVM_USE_CRT_MINSIZEREL="MT"
+    - name: build
+      run: cd llvm-project-$env:LLVM_VER/build && cmake --build . --config MinSizeRel --target libclang
+    - name: create and print sha512sum
+      run: |
+        $env:Path = "C:\Program Files\Git\usr\bin;$env:Path"
+        cd llvm-project-$env:LLVM_VER\build\MinSizeRel\bin
+        sha512sum.exe libclang.dll > libclang.dll.$env:LLVM_VER.windows-aarch64.sha512sum
+        echo "Checksum is: "
+        Get-Content -Path libclang.dll.$env:LLVM_VER.windows-aarch64.sha512sum
+        tar zcvf libclang.dll.$env:LLVM_VER.windows-aarch64.tar.gz libclang.dll libclang.dll.$env:LLVM_VER.windows-aarch64.sha512sum
+        sha512sum.exe libclang.dll.$env:LLVM_VER.windows-aarch64.tar.gz
+    - uses: actions/upload-artifact@v2
+      with:
+        name: libclang.dll.${{env.LLVM_VER}}.windows-aarch64.tar.gz
+        path: llvm-project-${{env.LLVM_VER}}\build\MinSizeRel\bin\libclang.dll.${{env.LLVM_VER}}.windows-aarch64.tar.gz
