@@ -11,6 +11,7 @@ libclang-for-pip
 [![Arch: arm](https://img.shields.io/badge/arch-arm-orange)](https://pypi.org/project/libclang/#files)
 
 [![Windows](https://github.com/sighingnow/libclang/workflows/libclang-windows-amd64/badge.svg)](https://github.com/sighingnow/libclang/actions/workflows/libclang-windows-amd64.yml)
+[![Windows AArch64](https://github.com/sighingnow/libclang/workflows/libclang-windows-aarch64/badge.svg)](https://github.com/sighingnow/libclang/actions/workflows/libclang-windows-aarch64.yml)
 [![Linux](https://github.com/sighingnow/libclang/workflows/libclang-linux-amd64/badge.svg)](https://github.com/sighingnow/libclang/actions/workflows/libclang-linux-amd64.yml)
 [![MacOS](https://github.com/sighingnow/libclang/workflows/libclang-macosx-amd64/badge.svg)](https://github.com/sighingnow/libclang/actions/workflows/libclang-macosx-amd64.yml)
 [![Linux Arm](https://github.com/sighingnow/libclang/workflows/libclang-linux-arm/badge.svg)](https://github.com/sighingnow/libclang/actions/workflows/libclang-linux-arm.yml)
