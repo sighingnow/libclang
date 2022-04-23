@@ -3,7 +3,7 @@ name: libclang-alpine-amd64
 on: [push, pull_request]
 
 env:
-  LLVM_VER: 13.0.0
+  LLVM_VER: 14.0.1
 
 concurrency:
   group: ${{ github.repository }}-${{ github.head_ref || github.sha }}-${{ github.workflow }}
@@ -15,6 +15,12 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/setup-python@v3
+      with:
+        python-version: '3.10'
+    - name: install wheel dependencies
+      run: |
+        pip3 install wheel
     - name: get llvm-project
       run: |
         wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VER/llvm-project-$LLVM_VER.src.tar.xz
@@ -45,3 +51,11 @@ jobs:
       with:
         name: libclang.so.${{env.LLVM_VER}}.alpine-amd64.tar.gz
         path: llvm-project-${{env.LLVM_VER}}/build/lib/libclang.so.${{env.LLVM_VER}}.alpine-amd64.tar.gz
+    - name: generate wheel package
+      run: |
+        cp llvm-project-$LLVM_VER/build/lib/libclang.so native/
+        python3 setup.py bdist_wheel --universal --plat-name=musllinux_1_2_x86_64
+    - uses: actions/upload-artifact@v2
+      with:
+        name: wheel-${{env.LLVM_VER}}-musllinux_1_2_x86_64
+        path: dist/*.whl
