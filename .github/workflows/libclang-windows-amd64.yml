@@ -48,7 +48,7 @@ jobs:
         path: llvm-project-${{env.LLVM_VER}}\build\MinSizeRel\bin\libclang.dll.${{env.LLVM_VER}}.windows-amd64.tar.gz
     - name: generate wheel package
       run: |
-        cp llvm-project-$LLVM_VER/build/lib/libclang.so native/
+        cp llvm-project-$LLVM_VER/build/lib/libclang.dll native/
         python3 setup.py bdist_wheel --universal --plat-name=win_amd64
     - uses: actions/upload-artifact@v2
       with:

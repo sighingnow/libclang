@@ -64,7 +64,7 @@ jobs:
         path: llvm-project-${{env.LLVM_VER}}/build/lib/libclang.dylib.${{env.LLVM_VER}}.macosx-amd64.tar.gz
     - name: generate wheel package
       run: |
-        cp llvm-project-$LLVM_VER/build/lib/libclang.so native/
+        cp llvm-project-$LLVM_VER/build/lib/libclang.dylib native/
         python3 setup.py bdist_wheel --universal --plat-name=macosx_10_9_x86_64
     - uses: actions/upload-artifact@v2
       with:
