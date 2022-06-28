@@ -4189,7 +4189,7 @@ def register_functions(lib, ignore_errors):
         register(f)
 
 class Config(object):
-    library_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'native')
+    library_path = os.environ.get('LIBCLANG_LIBRARY_PATH', os.path.join(os.path.dirname(os.path.realpath(__file__)), 'native'))
     library_file = None
     compatibility_check = True
     loaded = False
@@ -4257,7 +4257,7 @@ class Config(object):
         else:
             file = 'libclang.so'
 
-        if Config.library_path:
+        if Config.library_path and os.path.isfile(Config.library_path + '/' + file):
             file = Config.library_path + '/' + file
 
         return file
