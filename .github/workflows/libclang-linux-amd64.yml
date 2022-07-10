@@ -20,7 +20,7 @@ jobs:
         python-version: '3.10'
     - name: install wheel dependencies
       run: |
-        pip3 install wheel
+        pip3 install wheel auditwheel patchelf
     - name: get llvm-project
       run: |
         wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VER/llvm-project-$LLVM_VER.src.tar.xz
@@ -61,8 +61,10 @@ jobs:
     - name: generate wheel package
       run: |
         cp llvm-project-$LLVM_VER/build/lib/libclang.so native/
-        python3 setup.py bdist_wheel --universal --plat-name=manylinux1_x86_64
+        python3 setup.py bdist_wheel --universal --plat-name=linux_x86_64
+        auditwheel repair --plat manylinux_2_27_x86_64 dist/libclang-*-linux_x86_64.whl -w dist
+        rm -f dist/libclang-*-linux_x86_64.whl
     - uses: actions/upload-artifact@v2
       with:
-        name: wheel-${{env.LLVM_VER}}-manylinux1_x86_64
+        name: wheel-${{env.LLVM_VER}}-manylinux_x86_64
         path: dist/*.whl
