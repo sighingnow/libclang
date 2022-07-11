@@ -12,7 +12,7 @@ concurrency:
 jobs:
   build-and-deploy:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v3
@@ -28,20 +28,14 @@ jobs:
         mv llvm-project-$LLVM_VER.src llvm-project-$LLVM_VER
     - name: make build directory
       run: mkdir -p llvm-project-$LLVM_VER/build
-    - name: cmake
+    - name: pull docker
       run: |
-        cd llvm-project-$LLVM_VER/build
-        cmake ../llvm \
-          -DLLVM_ENABLE_PROJECTS=clang \
-          -DBUILD_SHARED_LIBS=OFF \
-          -DLLVM_ENABLE_TERMINFO=OFF \
-          -DLLVM_TARGETS_TO_BUILD=X86 \
-          -DCMAKE_BUILD_TYPE=MinSizeRel \
-          -DCMAKE_CXX_FLAGS_MINSIZEREL="-Os -DNDEBUG -static-libgcc -static-libstdc++ -s" \
-          -DCMAKE_C_COMPILER=gcc-7 \
-          -DCMAKE_CXX_COMPILER=g++-7
-    - name: build
-      run: cd llvm-project-$LLVM_VER/build && make libclang -j$(nproc)
+        sudo docker pull quay.io/pypa/manylinux2010_x86_64:latest
+    - name: cmake & build in docker
+      run: |
+        cp .github/script-to-build-manylinux2010.sh ./llvm-project-$LLVM_VER/
+        cd llvm-project-$LLVM_VER
+        bash ./script-to-build-manylinux2010.sh
     - name: print dependencies
       run: |
         file llvm-project-$LLVM_VER/build/lib/libclang.so
