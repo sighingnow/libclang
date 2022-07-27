@@ -55,7 +55,7 @@ jobs:
     - name: generate wheel package
       run: |
         cp llvm-project-$LLVM_VER/build/lib/libclang.so native/
-        python3 setup.py bdist_wheel --universal --plat-name=manylinux1_x86_64
+        python3 setup_ext.py bdist_wheel --universal --plat-name=manylinux1_x86_64
     - uses: actions/upload-artifact@v2
       with:
         name: wheel-${{env.LLVM_VER}}-manylinux1_x86_64
