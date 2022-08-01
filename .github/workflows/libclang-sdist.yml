@@ -1,4 +1,4 @@
-name: libclang-linux-amd64
+name: libclang-sdist
 
 on: [push, pull_request]
 
