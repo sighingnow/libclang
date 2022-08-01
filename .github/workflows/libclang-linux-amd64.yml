@@ -55,10 +55,10 @@ jobs:
     - name: generate wheel package
       run: |
         cp llvm-project-$LLVM_VER/build/lib/libclang.so native/
-        python3 setup_ext.py bdist_wheel --universal --plat-name=manylinux1_x86_64
+        python3 setup_ext.py bdist_wheel --universal --plat-name=manylinux2010_x86_64
     - uses: actions/upload-artifact@v2
       with:
-        name: wheel-${{env.LLVM_VER}}-manylinux1_x86_64
+        name: wheel-${{env.LLVM_VER}}-manylinux2010_x86_64
         path: dist/*.whl
     - name: Publish to PyPI
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
