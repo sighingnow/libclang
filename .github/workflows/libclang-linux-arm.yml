@@ -3,7 +3,7 @@ name: libclang-linux-arm
 on: [push, pull_request]
 
 env:
-  LLVM_VER: 14.0.1
+  LLVM_VER: 14.0.6
 
 concurrency:
   group: ${{ github.repository }}-${{ github.head_ref || github.sha }}-${{ github.workflow }}
@@ -96,3 +96,11 @@ jobs:
       with:
         name: wheel-${{env.LLVM_VER}}-manylinux2014_armv7l
         path: dist/*.whl
+    - name: Publish to PyPI
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        packages_dir: dist/
+        password: ${{ secrets.PYPI_TOKEN }}
+        verbose: true
+        print_hash: true
