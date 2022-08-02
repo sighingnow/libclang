@@ -57,6 +57,7 @@ jobs:
 
   upload-to-pypi:
     runs-on: ubuntu-20.04
+    needs: [build-and-deploy]
     steps:
     - uses: actions/download-artifact@v3
       with:
