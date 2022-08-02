@@ -32,7 +32,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: wheel-${{env.LLVM_VER}}-manylinux1_x86_64
-        path: dist/*.whl
+        path: dist/*.tar.gz
     - name: Publish to PyPI
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@release/v1

@@ -70,6 +70,14 @@ jobs:
       with:
         name: wheel-${{env.LLVM_VER}}-macosx_10_9_x86_64
         path: dist/*.whl
+
+  upload-to-pypi:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/download-artifact@v3
+      with:
+        name: wheel-${{env.LLVM_VER}}-macosx_10_9_x86_64
+        path: dist/
     - name: Publish to PyPI
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@release/v1
