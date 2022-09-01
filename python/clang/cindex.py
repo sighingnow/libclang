@@ -1520,6 +1520,9 @@ class Cursor(Structure):
         cursor._tu = tu
 
         return cursor
+      
+    def __hash__(self):
+      return self.hash
 
     def __eq__(self, other):
         return conf.lib.clang_equalCursors(self, other)
