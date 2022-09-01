@@ -35,12 +35,12 @@ jobs:
           -DBUILD_SHARED_LIBS=OFF `
           -DLLVM_ENABLE_TERMINFO=OFF `
           -DLLVM_TARGETS_TO_BUILD=X86 `
-          -DCMAKE_BUILD_TYPE=MinSizeRel `
+          -DCMAKE_BUILD_TYPE=RelWithDebInfo `
           -DCMAKE_CXX_FLAGS="/MP" `
           -DLLVM_USE_CRT_MINSIZEREL="MT"
-        cmake --build . --config MinSizeRel --target clang-tblgen
-        cmake --build . --config MinSizeRel --target llvm-tblgen
-        cd MinSizeRel
+        cmake --build . --config RelWithDebInfo --target clang-tblgen
+        cmake --build . --config RelWithDebInfo --target llvm-tblgen
+        cd RelWithDebInfo
         mkdir C:\llvm
         cp bin\clang-tblgen.exe C:\llvm
         cp bin\llvm-tblgen.exe C:\llvm
@@ -61,11 +61,11 @@ jobs:
             -DCMAKE_CXX_FLAGS="/MP" `
             -DLLVM_USE_CRT_MINSIZEREL="MT"
     - name: build
-      run: cd llvm-project-$env:LLVM_VER/build && cmake --build . --config MinSizeRel --target libclang
+      run: cd llvm-project-$env:LLVM_VER/build && cmake --build . --config RelWithDebInfo --target libclang
     - name: create and print sha512sum
       run: |
         $env:Path = "C:\Program Files\Git\usr\bin;$env:Path"
-        cd llvm-project-$env:LLVM_VER\build\MinSizeRel\bin
+        cd llvm-project-$env:LLVM_VER\build\RelWithDebInfo\bin
         sha512sum.exe libclang.dll > libclang.dll.$env:LLVM_VER.windows-aarch64.sha512sum
         echo "Checksum is: "
         Get-Content -Path libclang.dll.$env:LLVM_VER.windows-aarch64.sha512sum
@@ -74,10 +74,10 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: libclang.dll.${{env.LLVM_VER}}.windows-aarch64.tar.gz
-        path: llvm-project-${{env.LLVM_VER}}\build\MinSizeRel\bin\libclang.dll.${{env.LLVM_VER}}.windows-aarch64.tar.gz
+        path: llvm-project-${{env.LLVM_VER}}\build\RelWithDebInfo\bin\libclang.dll.${{env.LLVM_VER}}.windows-aarch64.tar.gz
     - name: generate wheel package
       run: |
-        cp llvm-project-${{env.LLVM_VER}}\build\MinSizeRel\bin\libclang.dll native/
+        cp llvm-project-${{env.LLVM_VER}}\build\RelWithDebInfo\bin\libclang.dll native/
         python3 setup_ext.py bdist_wheel --universal --plat-name=win_arm64
     - uses: actions/upload-artifact@v2
       with:

@@ -42,8 +42,8 @@ jobs:
           -DBUILD_SHARED_LIBS=OFF \
           -DLLVM_ENABLE_TERMINFO=OFF \
           -DLLVM_TARGETS_TO_BUILD=X86 \
-          -DCMAKE_BUILD_TYPE=MinSizeRel \
-          -DCMAKE_CXX_FLAGS_MINSIZEREL="-Os -DNDEBUG -static-libgcc -static-libstdc++ -s" \
+          -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+          -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g -DNDEBUG -static-libgcc -static-libstdc++" \
           -DCMAKE_C_COMPILER=gcc-7 \
           -DCMAKE_CXX_COMPILER=g++-7
         make clang-tblgen llvm-tblgen -j$(nproc)
@@ -65,8 +65,8 @@ jobs:
           -DLLVM_TARGETS_TO_BUILD=ARM \
           -DLLVM_TABLEGEN=/usr/bin/llvm-tblgen \
           -DCLANG_TABLEGEN=/usr/bin/clang-tblgen \
-          -DCMAKE_BUILD_TYPE=MinSizeRel \
-          -DCMAKE_CXX_FLAGS_MINSIZEREL="-Os -DNDEBUG -static-libgcc -static-libstdc++ -s" \
+          -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+          -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g -DNDEBUG -static-libgcc -static-libstdc++" \
           -DCMAKE_C_FLAGS="-march=armv7" \
           -DCMAKE_CXX_FLAGS="-march=armv7" \
           -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc-7 \

@@ -10,7 +10,7 @@ sudo docker run --privileged --network=host --rm -v `pwd`:/work quay.io/pypa/man
       -DBUILD_SHARED_LIBS=OFF \
       -DLLVM_ENABLE_TERMINFO=OFF \
       -DLLVM_TARGETS_TO_BUILD=AArch64 \
-      -DCMAKE_BUILD_TYPE=MinSizeRel \
-      -DCMAKE_CXX_FLAGS_MINSIZEREL="-Os -DNDEBUG -static-libgcc -static-libstdc++ -s" && \
+      -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+      -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g -DNDEBUG -static-libgcc -static-libstdc++" && \
     make libclang -j2'
 sudo chmod -R a+wr `pwd`/build

@@ -32,11 +32,11 @@ jobs:
         cd llvm-project-$env:LLVM_VER/build
         cmake ../llvm -Thost=x64 -DLLVM_ENABLE_PROJECTS=clang -DBUILD_SHARED_LIBS=OFF -DLLVM_ENABLE_TERMINFO=OFF -DLLVM_TARGETS_TO_BUILD=X86 -DCMAKE_CXX_FLAGS="/MP" -DLLVM_USE_CRT_MINSIZEREL="MT"
     - name: build
-      run: cd llvm-project-$env:LLVM_VER/build && cmake --build . --config MinSizeRel --target libclang
+      run: cd llvm-project-$env:LLVM_VER/build && cmake --build . --config RelWithDebInfo --target libclang
     - name: create and print sha512sum
       run: |
         $env:Path = "C:\Program Files\Git\usr\bin;$env:Path"
-        cd llvm-project-$env:LLVM_VER\build\MinSizeRel\bin
+        cd llvm-project-$env:LLVM_VER\build\RelWithDebInfo\bin
         sha512sum.exe libclang.dll > libclang.dll.$env:LLVM_VER.windows-amd64.sha512sum
         echo "Checksum is: "
         Get-Content -Path libclang.dll.$env:LLVM_VER.windows-amd64.sha512sum
@@ -45,10 +45,10 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: libclang.dll.${{env.LLVM_VER}}.windows-amd64.tar.gz
-        path: llvm-project-${{env.LLVM_VER}}\build\MinSizeRel\bin\libclang.dll.${{env.LLVM_VER}}.windows-amd64.tar.gz
+        path: llvm-project-${{env.LLVM_VER}}\build\RelWithDebInfo\bin\libclang.dll.${{env.LLVM_VER}}.windows-amd64.tar.gz
     - name: generate wheel package
       run: |
-        cp llvm-project-${{env.LLVM_VER}}\build\MinSizeRel\bin\libclang.dll native/
+        cp llvm-project-${{env.LLVM_VER}}\build\RelWithDebInfo\bin\libclang.dll native/
         python3 setup_ext.py bdist_wheel --universal --plat-name=win_amd64
     - uses: actions/upload-artifact@v2
       with:
