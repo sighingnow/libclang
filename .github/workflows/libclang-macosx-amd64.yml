@@ -3,7 +3,7 @@ name: libclang-macosx-amd64
 on: [push, pull_request]
 
 env:
-  LLVM_VER: 14.0.6
+  LLVM_VER: 15.0.3
 
 concurrency:
   group: ${{ github.repository }}-${{ github.head_ref || github.sha }}-${{ github.workflow }}
