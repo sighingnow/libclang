@@ -14,8 +14,8 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: macos-10.15
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v3
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
       with:
         python-version: '3.10'
     - name: install wheel dependencies
@@ -48,6 +48,7 @@ jobs:
       run: cd llvm-project-$LLVM_VER/build && make libclang -j$(sysctl -n hw.ncpu)
     - name: print dependencies
       run: |
+        du -csh llvm-project-$LLVM_VER/build/lib/libclang.dylib
         file llvm-project-$LLVM_VER/build/lib/libclang.dylib
         otool -L llvm-project-$LLVM_VER/build/lib/libclang.dylib
     - name: create and print sha512sum
@@ -58,7 +59,7 @@ jobs:
         cat libclang.dylib.$LLVM_VER.macosx-amd64.sha512sum
         gtar zcvf libclang.dylib.$LLVM_VER.macosx-amd64.tar.gz libclang.dylib libclang.dylib.$LLVM_VER.macosx-amd64.sha512sum
         shasum -a512 libclang.dylib.$LLVM_VER.macosx-amd64.tar.gz
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: libclang.dylib.${{env.LLVM_VER}}.macosx-amd64.tar.gz
         path: llvm-project-${{env.LLVM_VER}}/build/lib/libclang.dylib.${{env.LLVM_VER}}.macosx-amd64.tar.gz
@@ -66,7 +67,7 @@ jobs:
       run: |
         cp llvm-project-$LLVM_VER/build/lib/libclang.dylib native/
         python3 setup_ext.py bdist_wheel --universal --plat-name=macosx_10_9_x86_64
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: wheel-${{env.LLVM_VER}}-macosx_10_9_x86_64
         path: dist/*.whl

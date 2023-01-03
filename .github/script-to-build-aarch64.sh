@@ -12,5 +12,6 @@ sudo docker run --privileged --network=host --rm -v `pwd`:/work quay.io/pypa/man
       -DLLVM_TARGETS_TO_BUILD=AArch64 \
       -DCMAKE_BUILD_TYPE=RelWithDebInfo \
       -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g -DNDEBUG -static-libgcc -static-libstdc++" && \
-    make libclang -j2'
+    make libclang -j$(nproc) && \
+    aarch64-linux-gnu-strip lib/libclang.so'
 sudo chmod -R a+wr `pwd`/build
