@@ -3,7 +3,7 @@ name: libclang-linux-amd64
 on: [push, pull_request]
 
 env:
-  LLVM_VER: 15.0.3
+  LLVM_VER: 15.0.6
 
 concurrency:
   group: ${{ github.repository }}-${{ github.head_ref || github.sha }}-${{ github.workflow }}
@@ -61,6 +61,39 @@ jobs:
       with:
         name: wheel-${{env.LLVM_VER}}-manylinux2010_x86_64
         path: dist/*.whl
+    - name: Publish to PyPI
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        packages_dir: dist/
+        password: ${{ secrets.PYPI_TOKEN }}
+        verbose: true
+        print_hash: true
+
+  build-and-deploy-sdist:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    runs-on: ubuntu-20.04
+    needs: [build-and-deploy]
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - name: install wheel dependencies
+      run: |
+        pip3 install wheel
+    - name: get llvm-project
+      run: |
+        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VER/llvm-project-$LLVM_VER.src.tar.xz
+        tar xf llvm-project-$LLVM_VER.src.tar.xz
+        mv llvm-project-$LLVM_VER.src llvm-project-$LLVM_VER
+    - name: generate wheel package
+      run: |
+        python3 setup.py sdist
+    - uses: actions/upload-artifact@v3
+      with:
+        name: wheel-${{env.LLVM_VER}}-sdist
+        path: dist/*.tar.gz
     - name: Publish to PyPI
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@release/v1

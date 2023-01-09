@@ -1084,7 +1084,6 @@ CursorKind.OMP_ARRAY_SECTION_EXPR = CursorKind(147)
 # Represents an @available(...) check.
 CursorKind.OBJC_AVAILABILITY_CHECK_EXPR = CursorKind(148)
 
-
 # Fixed point literal
 CursorKind.FIXED_POINT_LITERAL = CursorKind(149)
 
@@ -1096,6 +1095,12 @@ CursorKind.OMP_ITERATOR_EXPR = CursorKind(151)
 
 # OpenCL's addrspace_cast<> expression.
 CursorKind.CXX_ADDRSPACE_CAST_EXPR = CursorKind(152)
+
+# Expression that references a C++20 concept.
+CursorKind.CONCEPT_SPECIALIZATION_EXPR = CursorKind(153)
+
+# Expression that references a C++20 concept.
+CursorKind.REQUIRES_EXPR = CursorKind(154)
 
 # A statement whose specific kind is not exposed via this interface.
 #
@@ -1398,6 +1403,24 @@ CursorKind.OMP_TARGET_TEAMS_GENERIC_LOOP_DIRECTIVE = CursorKind(297)
 # OpenMP parallel loop directive.
 CursorKind.OMP_PARALLEL_GENERIC_LOOP_DIRECTIVE = CursorKind(298)
 
+# OpenMP target parallel loop directive.
+CursorKind.OMP_TARGET_PARALLEL_GENERIC_LOOP_DIRECTIVE = CursorKind(299)
+
+# OpenMP parallel masked directive.
+CursorKind.OMP_PARALLEL_MASKED_DIRECTIVE = CursorKind(300)
+
+# OpenMP masked taskloop directive.
+CursorKind.OMP_MASKED_TASK_LOOP_DIRECTIVE = CursorKind(301)
+
+# OpenMP masked taskloop simd directive.
+CursorKind.OMP_MASKED_TASK_LOOP_SIMD_DIRECTIVE = CursorKind(302)
+
+# OpenMP parallel masked taskloop directive.
+CursorKind.OMP_PARALLEL_MASKED_TASK_LOOP_DIRECTIVE = CursorKind(303)
+
+# OpenMP parallel masked taskloop simd directive.
+CursorKind.OMP_PARALLEL_MASKED_TASK_LOOP_SIMD_DIRECTIVE = CursorKind(304)
+
 ###
 # Other Kinds
 
@@ -1405,7 +1428,7 @@ CursorKind.OMP_PARALLEL_GENERIC_LOOP_DIRECTIVE = CursorKind(298)
 #
 # The translation unit cursor exists primarily to act as the root cursor for
 # traversing the contents of a translation unit.
-CursorKind.TRANSLATION_UNIT = CursorKind(300)
+CursorKind.TRANSLATION_UNIT = CursorKind(350)
 
 ###
 # Attributes
@@ -1520,9 +1543,9 @@ class Cursor(Structure):
         cursor._tu = tu
 
         return cursor
-      
+
     def __hash__(self):
-      return self.hash
+-       return self.hash
 
     def __eq__(self, other):
         return conf.lib.clang_equalCursors(self, other)
