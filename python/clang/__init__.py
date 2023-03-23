@@ -20,4 +20,3 @@ The available modules are:
 """
 
 __all__ = ['cindex']
-

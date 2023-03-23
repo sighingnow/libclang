@@ -3,7 +3,7 @@ macos_instance:
 
 env:
   MACOSX_DEPLOYMENT_TARGET: "10.15"
-  LLVM_VER: 15.0.6
+  LLVM_VER: 16.0.0
 
 task:
   checkout_script:
@@ -51,7 +51,7 @@ task:
     shasum -a512 libclang.dylib.$LLVM_VER.macosx-amd64.tar.gz
 
   libclang_artifacts:
-    path: llvm-project-${{env.LLVM_VER}}/build/lib/libclang.dylib.${{env.LLVM_VER}}.macosx-amd64.tar.gz
+    path: llvm-project-$LLVM_VER/build/lib/libclang.dylib.$LLVM_VER.macosx-amd64.tar.gz
 
   generate_wheel_package_script: |
     cp llvm-project-$LLVM_VER/build/lib/libclang.dylib native/
