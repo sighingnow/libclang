@@ -30,8 +30,8 @@ task:
           -DLLVM_TARGETS_TO_BUILD=X86 \
           -DCMAKE_BUILD_TYPE=RelWithDebInfo \
           -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g -DNDEBUG -static-libgcc -static-libstdc++" \
-          -DCMAKE_C_COMPILER=gcc-9 \
-          -DCMAKE_CXX_COMPILER=g++-9 \
+          -DCMAKE_C_COMPILER=gcc \
+          -DCMAKE_CXX_COMPILER=g++ \
           -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9
     make libclang -j$(sysctl -n hw.ncpu)
 
