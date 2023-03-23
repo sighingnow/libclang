@@ -23,7 +23,7 @@ jobs:
         pip3 install wheel
     - name: get llvm-project
       run: |
-        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VER/llvm-project-$LLVM_VER.src.tar.xz
+        wget -q https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VER/llvm-project-$LLVM_VER.src.tar.xz
         tar xf llvm-project-$LLVM_VER.src.tar.xz
         mv llvm-project-$LLVM_VER.src llvm-project-$LLVM_VER
     - name: make build directory
@@ -84,7 +84,7 @@ jobs:
         pip3 install wheel
     - name: get llvm-project
       run: |
-        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VER/llvm-project-$LLVM_VER.src.tar.xz
+        wget -q https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VER/llvm-project-$LLVM_VER.src.tar.xz
         tar xf llvm-project-$LLVM_VER.src.tar.xz
         mv llvm-project-$LLVM_VER.src llvm-project-$LLVM_VER
     - name: generate wheel package

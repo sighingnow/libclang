@@ -16,7 +16,7 @@ task:
     - pip3 install wheel
 
   download_llvm_script: |
-    wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VER/llvm-project-$LLVM_VER.src.tar.xz
+    wget -q https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VER/llvm-project-$LLVM_VER.src.tar.xz
     tar xf llvm-project-$LLVM_VER.src.tar.xz
     mv llvm-project-$LLVM_VER.src llvm-project-$LLVM_VER
 
@@ -29,7 +29,7 @@ task:
           -DLLVM_ENABLE_TERMINFO=OFF \
           -DLLVM_TARGETS_TO_BUILD=X86 \
           -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-          -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g -DNDEBUG -static-libgcc -static-libstdc++" \
+          -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g -DNDEBUG -static" \
           -DCMAKE_C_COMPILER=gcc \
           -DCMAKE_CXX_COMPILER=g++ \
           -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9
