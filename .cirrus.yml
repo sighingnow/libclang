@@ -12,7 +12,7 @@ task:
 
   install_deps_script:
     - brew update
-    - brew install gnu-tar
+    - brew install gcc@11 gnu-tar
     - pip3 install wheel
 
   download_llvm_script: |
@@ -26,12 +26,14 @@ task:
         cmake ../llvm \
           -DLLVM_ENABLE_PROJECTS=clang \
           -DBUILD_SHARED_LIBS=OFF \
+          -DLLVM_ENABLE_ZLIB=OFF \
+          -DLLVM_ENABLE_ZSTD=OFF \
           -DLLVM_ENABLE_TERMINFO=OFF \
           -DLLVM_TARGETS_TO_BUILD=X86 \
           -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-          -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g -DNDEBUG -static" \
-          -DCMAKE_C_COMPILER=gcc \
-          -DCMAKE_CXX_COMPILER=g++ \
+          -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g -DNDEBUG -static-libgcc -static-libstdc++" \
+          -DCMAKE_C_COMPILER=$(brew --prefix gcc@11)/bin/gcc-11 \
+          -DCMAKE_CXX_COMPILER=$(brew --prefix gcc@11)/bin/g++-11 \
           -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9
     make libclang -j$(sysctl -n hw.ncpu)
 

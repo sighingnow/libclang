@@ -8,6 +8,8 @@ sudo docker run --privileged --network=host --rm -v `pwd`:/work quay.io/pypa/man
     cmake ../llvm \
       -DLLVM_ENABLE_PROJECTS=clang \
       -DBUILD_SHARED_LIBS=OFF \
+      -DLLVM_ENABLE_ZLIB=OFF \
+      -DLLVM_ENABLE_ZSTD=OFF \
       -DLLVM_ENABLE_TERMINFO=OFF \
       -DLLVM_TARGETS_TO_BUILD=AArch64 \
       -DCMAKE_BUILD_TYPE=RelWithDebInfo \

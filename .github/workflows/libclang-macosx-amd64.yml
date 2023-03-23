@@ -37,6 +37,8 @@ jobs:
         cmake ../llvm \
           -DLLVM_ENABLE_PROJECTS=clang \
           -DBUILD_SHARED_LIBS=OFF \
+          -DLLVM_ENABLE_ZLIB=OFF \
+          -DLLVM_ENABLE_ZSTD=OFF \
           -DLLVM_ENABLE_TERMINFO=OFF \
           -DLLVM_TARGETS_TO_BUILD=X86 \
           -DCMAKE_BUILD_TYPE=RelWithDebInfo \
