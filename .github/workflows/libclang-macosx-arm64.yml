@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 env:
   LLVM_VER: 16.0.4
-  BIN: $BIN
+  BIN: /usr/local/opt/llvm/bin
 
 concurrency:
   group: ${{ github.repository }}-${{ github.head_ref || github.sha }}-${{ github.workflow }}
@@ -22,9 +22,8 @@ jobs:
     - name: install wheel dependencies
       run: |
         pip3 install wheel
-    - name: install gnu-tar and llvm
+    - name: install llvm
       run: |
-        brew install gnu-tar
         brew install llvm  # assume install under /usr/local/opt/llvm
     - name: get llvm-project
       run: |
@@ -34,6 +33,9 @@ jobs:
     - name: cmake
       # see https://llvm.org/docs/HowToCrossCompileLLVM.html
       run: |
+        echo "BIN=$BIN" >> "$GITHUB_ENV"
+        echo "$BIN" >> "$GITHUB_PATH"
+        set echo
         uname -a
         cd llvm-project-$LLVM_VER 
         cmake -S llvm \
