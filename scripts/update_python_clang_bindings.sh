@@ -3,7 +3,7 @@ set -euo pipefail
 
 TOP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 
-LLVM_VERSION="${LLVM_VERSION:-16.0.4}"
+LLVM_VERSION="${LLVM_VERSION:-16.0.6}"
 LLVM_URL_PREFIX="https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-${LLVM_VERSION}/clang/bindings/python"
 
 LISTING=(
@@ -20,7 +20,7 @@ function run() {
 BINDINGS_DIR="${TOP_DIR}/python"
 
 for clang_py_file in "${LISTING[@]}"; do
-  run curl -fsSL "${LLVM_URL_PREFIX}/${clang_py_file}" -o "${BINDINGS_DIR}/${clang_py_file}"
+  run curl --insecure -fsSL "${LLVM_URL_PREFIX}/${clang_py_file}" -o "${BINDINGS_DIR}/${clang_py_file}"
 done
 
 pushd "${TOP_DIR}" > /dev/null
