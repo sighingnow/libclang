@@ -34,8 +34,10 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y \
           binutils-arm-linux-gnueabihf \
-          g++-7-arm-linux-gnueabihf \
-          gcc-7-arm-linux-gnueabihf \
+          gcc-8 \
+          g++-8 \
+          gcc-8-arm-linux-gnueabihf \
+          g++-8-arm-linux-gnueabihf
     - name: build host llvmtblgen/clangtblgen
       run: |
         mkdir llvm-project-$LLVM_VER/build-host
@@ -49,8 +51,8 @@ jobs:
           -DLLVM_TARGETS_TO_BUILD=X86 \
           -DCMAKE_BUILD_TYPE=RelWithDebInfo \
           -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g -DNDEBUG -static-libgcc -static-libstdc++" \
-          -DCMAKE_C_COMPILER=gcc-7 \
-          -DCMAKE_CXX_COMPILER=g++-7
+          -DCMAKE_C_COMPILER=gcc-8 \
+          -DCMAKE_CXX_COMPILER=g++-8
         make clang-tblgen llvm-tblgen -j$(nproc)
 
         # copy the artifacts to an absolute path
@@ -76,8 +78,8 @@ jobs:
           -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g -DNDEBUG -static-libgcc -static-libstdc++" \
           -DCMAKE_C_FLAGS="-march=armv7" \
           -DCMAKE_CXX_FLAGS="-march=armv7" \
-          -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc-7 \
-          -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++-7
+          -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc-8 \
+          -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++-8
     - name: build
       run: |
         cd llvm-project-$LLVM_VER/build

@@ -34,8 +34,10 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y \
           binutils-aarch64-linux-gnu \
-          g++-7-aarch64-linux-gnu \
-          gcc-7-aarch64-linux-gnu \
+          gcc-8 \
+          g++-8 \
+          gcc-8-aarch64-linux-gnu \
+          g++-8-aarch64-linux-gnu
     - name: build host llvmtblgen/clangtblgen
       run: |
         mkdir llvm-project-$LLVM_VER/build-host
@@ -49,8 +51,8 @@ jobs:
           -DLLVM_TARGETS_TO_BUILD=X86 \
           -DCMAKE_BUILD_TYPE=RelWithDebInfo \
           -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g -DNDEBUG -static-libgcc -static-libstdc++" \
-          -DCMAKE_C_COMPILER=gcc-7 \
-          -DCMAKE_CXX_COMPILER=g++-7
+          -DCMAKE_C_COMPILER=gcc-8 \
+          -DCMAKE_CXX_COMPILER=g++-8
         make clang-tblgen llvm-tblgen -j$(nproc)
 
         # copy the artifacts to an absolute path
@@ -74,8 +76,8 @@ jobs:
           -DCLANG_TABLEGEN=/usr/bin/clang-tblgen \
           -DCMAKE_BUILD_TYPE=RelWithDebInfo \
           -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g -DNDEBUG -static-libgcc -static-libstdc++" \
-          -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc-7 \
-          -DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++-7
+          -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc-8 \
+          -DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++-8
     - name: build
       run: |
         cd llvm-project-$LLVM_VER/build

@@ -73,7 +73,7 @@ jobs:
         du -csh libclang.dylib
         file libclang.dylib
         otool -L libclang.dylib
-        dyld_info -platform -dependents libclang.dylib 
+        dyldinfo -platform -dependents libclang.dylib || true
     - name: create and print sha512sum
       run: |
         cd llvm-project-$LLVM_VER/build/lib

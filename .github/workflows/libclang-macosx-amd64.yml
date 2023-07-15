@@ -43,8 +43,8 @@ jobs:
           -DLLVM_TARGETS_TO_BUILD=X86 \
           -DCMAKE_BUILD_TYPE=RelWithDebInfo \
           -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g -DNDEBUG -static-libgcc -static-libstdc++" \
-          -DCMAKE_C_COMPILER=gcc-9 \
-          -DCMAKE_CXX_COMPILER=g++-9 \
+          -DCMAKE_C_COMPILER=gcc-10 \
+          -DCMAKE_CXX_COMPILER=g++-10 \
           -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9
     - name: build
       run: cd llvm-project-$LLVM_VER/build && make libclang -j$(sysctl -n hw.ncpu)
@@ -53,6 +53,7 @@ jobs:
         du -csh llvm-project-$LLVM_VER/build/lib/libclang.dylib
         file llvm-project-$LLVM_VER/build/lib/libclang.dylib
         otool -L llvm-project-$LLVM_VER/build/lib/libclang.dylib
+        dyldinfo -platform -dependents libclang.dylib || true
     - name: create and print sha512sum
       run: |
         cd llvm-project-$LLVM_VER/build/lib
