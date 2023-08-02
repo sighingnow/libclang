@@ -76,8 +76,10 @@ jobs:
           -DCLANG_TABLEGEN=/usr/bin/clang-tblgen \
           -DCMAKE_BUILD_TYPE=RelWithDebInfo \
           -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g -DNDEBUG -static-libgcc -static-libstdc++" \
-          -DCMAKE_C_FLAGS="-march=armv7" \
-          -DCMAKE_CXX_FLAGS="-march=armv7" \
+          -DCMAKE_C_FLAGS="-march=armv7 -include $(realpath ../../force_glibc_2_17.h)" \
+          -DCMAKE_CXX_FLAGS="-march=armv7 -include $(realpath ../../force_glibc_2_17.h)" \
+          -DCMAKE_EXE_LINKER_FLAGS="-lm" \
+          -DCMAKE_SHARED_LINKER_FLAGS="-lm" \
           -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc-8 \
           -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++-8
     - name: build
@@ -89,6 +91,8 @@ jobs:
       run: |
         du -csh $(realpath llvm-project-$LLVM_VER/build/lib/libclang.so)
         file $(realpath llvm-project-$LLVM_VER/build/lib/libclang.so)
+        strings llvm-project-$LLVM_VER/build/lib/libclang.so | grep GLIBC
+        nm --dynamic --undefined-only --with-symbol-versions llvm-project-$LLVM_VER/build/lib/libclang.so
     - name: create and print sha512sum
       run: |
         cd llvm-project-$LLVM_VER/build/lib

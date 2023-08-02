@@ -44,6 +44,8 @@ jobs:
         du -csh $(realpath llvm-project-$LLVM_VER/build/lib/libclang.so)
         file $(realpath llvm-project-$LLVM_VER/build/lib/libclang.so)
         ldd llvm-project-$LLVM_VER/build/lib/libclang.so
+        strings llvm-project-$LLVM_VER/build/lib/libclang.so | grep GLIBC
+        nm --dynamic --undefined-only --with-symbol-versions llvm-project-$LLVM_VER/build/lib/libclang.so
     - name: create and print sha512sum
       run: |
         cd llvm-project-$LLVM_VER/build/lib
