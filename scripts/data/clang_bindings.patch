@@ -1,10 +1,11 @@
 diff -aruN a/python/clang/cindex.py b/python/clang/cindex.py
---- a/python/clang/cindex.py	2023-01-18 09:25:44.368633403 +0800
-+++ b/python/clang/cindex.py	2023-01-18 09:04:43.624584608 +0800
-@@ -1084,6 +1084,23 @@
+--- a/python/clang/cindex.py	2024-03-17 21:00:52
++++ b/python/clang/cindex.py	2024-03-17 21:02:00
+@@ -1121,7 +1121,24 @@
+ 
  # Represents an @available(...) check.
  CursorKind.OBJC_AVAILABILITY_CHECK_EXPR = CursorKind(148)
-
++
 +# Fixed point literal
 +CursorKind.FIXED_POINT_LITERAL = CursorKind(149)
 +
@@ -19,16 +20,16 @@ diff -aruN a/python/clang/cindex.py b/python/clang/cindex.py
 +
 +# Expression that references a C++20 concept.
 +CursorKind.CONCEPT_SPECIALIZATION_EXPR = CursorKind(153)
-+
+ 
 +# Expression that references a C++20 concept.
 +CursorKind.REQUIRES_EXPR = CursorKind(154)
-
+ 
  # A statement whose specific kind is not exposed via this interface.
  #
-@@ -1305,6 +1322,105 @@
+@@ -1343,6 +1360,105 @@
  # OpenMP teams distribute directive.
  CursorKind.OMP_TEAMS_DISTRIBUTE_DIRECTIVE = CursorKind(271)
-
+ 
 +# OpenMP teams distribute simd directive.
 +CursorKind.OMP_TEAMS_DISTRIBUTE_SIMD_DIRECTIVE = CursorKind(272)
 +
@@ -130,32 +131,32 @@ diff -aruN a/python/clang/cindex.py b/python/clang/cindex.py
 +
  ###
  # Other Kinds
-
-@@ -1428,6 +1544,9 @@
-
+ 
+@@ -1470,6 +1586,9 @@
+ 
          return cursor
-
+ 
 +    def __hash__(self):
 +        return self.hash
 +
      def __eq__(self, other):
          return conf.lib.clang_equalCursors(self, other)
-
-@@ -4096,7 +4215,7 @@
-         register(f)
-
+ 
+@@ -3864,7 +3983,7 @@
+ 
+ 
  class Config(object):
 -    library_path = None
-+    library_path = os.environ.get('LIBCLANG_LIBRARY_PATH', os.path.join(os.path.dirname(os.path.realpath(__file__)), 'native'))
++    library_path = os.environ.get("LIBCLANG_LIBRARY_PATH", os.path.join(os.path.dirname(os.path.realpath(__file__)), "native"))
      library_file = None
      compatibility_check = True
      loaded = False
-@@ -4164,7 +4283,7 @@
+@@ -3939,7 +4058,7 @@
          else:
-             file = 'libclang.so'
-
+             file = "libclang.so"
+ 
 -        if Config.library_path:
-+        if Config.library_path and os.path.isfile(Config.library_path + '/' + file):
-             file = Config.library_path + '/' + file
-
++        if Config.library_path and os.path.isfile(Config.library_path + "/" + file):
+             file = Config.library_path + "/" + file
+ 
          return file

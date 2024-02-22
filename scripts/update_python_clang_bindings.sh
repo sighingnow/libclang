@@ -3,7 +3,7 @@ set -euo pipefail
 
 TOP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 
-LLVM_VERSION="${LLVM_VERSION:-16.0.6}"
+LLVM_VERSION="${LLVM_VERSION:-17.0.6}"
 LLVM_URL_PREFIX="https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-${LLVM_VERSION}/clang/bindings/python"
 
 LISTING=(
