@@ -1,7 +1,7 @@
 diff -aruN a/python/clang/cindex.py b/python/clang/cindex.py
---- a/python/clang/cindex.py	2024-03-17 21:00:52
-+++ b/python/clang/cindex.py	2024-03-17 21:02:00
-@@ -1121,7 +1121,24 @@
+--- a/python/clang/cindex.py	2024-03-17 21:19:17
++++ b/python/clang/cindex.py	2024-03-17 21:18:28
+@@ -1090,7 +1090,24 @@
  
  # Represents an @available(...) check.
  CursorKind.OBJC_AVAILABILITY_CHECK_EXPR = CursorKind(148)
@@ -26,7 +26,7 @@ diff -aruN a/python/clang/cindex.py b/python/clang/cindex.py
  
  # A statement whose specific kind is not exposed via this interface.
  #
-@@ -1343,6 +1360,105 @@
+@@ -1312,6 +1329,105 @@
  # OpenMP teams distribute directive.
  CursorKind.OMP_TEAMS_DISTRIBUTE_DIRECTIVE = CursorKind(271)
  
@@ -132,7 +132,7 @@ diff -aruN a/python/clang/cindex.py b/python/clang/cindex.py
  ###
  # Other Kinds
  
-@@ -1470,6 +1586,9 @@
+@@ -1441,6 +1557,9 @@
  
          return cursor
  
@@ -142,16 +142,16 @@ diff -aruN a/python/clang/cindex.py b/python/clang/cindex.py
      def __eq__(self, other):
          return conf.lib.clang_equalCursors(self, other)
  
-@@ -3864,7 +3983,7 @@
+@@ -3841,7 +3960,7 @@
  
  
- class Config(object):
+ class Config:
 -    library_path = None
 +    library_path = os.environ.get("LIBCLANG_LIBRARY_PATH", os.path.join(os.path.dirname(os.path.realpath(__file__)), "native"))
      library_file = None
      compatibility_check = True
      loaded = False
-@@ -3939,7 +4058,7 @@
+@@ -3916,7 +4035,7 @@
          else:
              file = "libclang.so"
  
