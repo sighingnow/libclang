@@ -3,7 +3,7 @@ name: libclang-windows-aarch64
 on: [push, pull_request]
 
 env:
-  LLVM_VER: 17.0.6
+  LLVM_VER: 18.1.1
 
 concurrency:
   group: ${{ github.repository }}-${{ github.head_ref || github.sha }}-${{ github.workflow }}
@@ -92,7 +92,7 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [build-and-deploy]
     steps:
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: wheel-${{env.LLVM_VER}}-win_arm64
         path: dist/

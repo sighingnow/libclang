@@ -3,7 +3,7 @@ macos_instance:
 
 env:
   MACOSX_DEPLOYMENT_TARGET: "10.15"
-  LLVM_VER: 17.0.6
+  LLVM_VER: 18.1.1
 
 task:
   checkout_script:
