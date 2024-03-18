@@ -51,7 +51,7 @@ jobs:
         Get-Content -Path libclang.dll.$env:LLVM_VER.windows-amd64.sha512sum
         tar zcvf libclang.dll.$env:LLVM_VER.windows-amd64.tar.gz libclang.dll libclang.dll.$env:LLVM_VER.windows-amd64.sha512sum
         sha512sum.exe libclang.dll.$env:LLVM_VER.windows-amd64.tar.gz
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: libclang.dll.${{env.LLVM_VER}}.windows-amd64.tar.gz
         path: llvm-project-${{env.LLVM_VER}}\build\RelWithDebInfo\bin\libclang.dll.${{env.LLVM_VER}}.windows-amd64.tar.gz
@@ -59,7 +59,7 @@ jobs:
       run: |
         cp llvm-project-${{env.LLVM_VER}}\build\RelWithDebInfo\bin\libclang.dll native/
         python3 setup_ext.py bdist_wheel --universal --plat-name=win_amd64
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: wheel-${{env.LLVM_VER}}-win_amd64
         path: dist/*.whl

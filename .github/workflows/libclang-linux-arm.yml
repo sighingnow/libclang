@@ -101,7 +101,7 @@ jobs:
         cat libclang.so.$LLVM_VER.linux-arm.sha512sum
         tar zcvfh libclang.so.$LLVM_VER.linux-arm.tar.gz libclang.so libclang.so.$LLVM_VER.linux-arm.sha512sum
         shasum -a512 libclang.so.$LLVM_VER.linux-arm.tar.gz
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: libclang.so.${{env.LLVM_VER}}.linux-arm.tar.gz
         path: llvm-project-${{env.LLVM_VER}}/build/lib/libclang.so.${{env.LLVM_VER}}.linux-arm.tar.gz
@@ -109,7 +109,7 @@ jobs:
       run: |
         cp llvm-project-$LLVM_VER/build/lib/libclang.so native/
         python3 setup_ext.py bdist_wheel --universal --plat-name=manylinux2014_armv7l
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: wheel-${{env.LLVM_VER}}-manylinux2014_armv7l
         path: dist/*.whl

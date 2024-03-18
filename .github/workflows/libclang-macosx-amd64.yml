@@ -62,7 +62,7 @@ jobs:
         cat libclang.dylib.$LLVM_VER.macosx-amd64.sha512sum
         gtar zcvf libclang.dylib.$LLVM_VER.macosx-amd64.tar.gz libclang.dylib libclang.dylib.$LLVM_VER.macosx-amd64.sha512sum
         shasum -a512 libclang.dylib.$LLVM_VER.macosx-amd64.tar.gz
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: libclang.dylib.${{env.LLVM_VER}}.macosx-amd64.tar.gz
         path: llvm-project-${{env.LLVM_VER}}/build/lib/libclang.dylib.${{env.LLVM_VER}}.macosx-amd64.tar.gz
@@ -70,7 +70,7 @@ jobs:
       run: |
         cp llvm-project-$LLVM_VER/build/lib/libclang.dylib native/
         python3 setup_ext.py bdist_wheel --universal --plat-name=macosx_10_9_x86_64
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: wheel-${{env.LLVM_VER}}-macosx_10_9_x86_64
         path: dist/*.whl
