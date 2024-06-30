@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 env:
   LLVM_VER: 18.1.1
-  BIN: /usr/local/opt/llvm/bin
+  MACOSX_DEPLOYMENT_TARGET: "10.15"
 
 concurrency:
   group: ${{ github.repository }}-${{ github.head_ref || github.sha }}-${{ github.workflow }}
@@ -13,68 +13,50 @@ concurrency:
 jobs:
   build-and-deploy:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
-    runs-on: macos-11
+    runs-on: macos-14
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
+        python-version: '3.10'
     - name: install wheel dependencies
       run: |
         pip3 install wheel
-    - name: install llvm
+    - name: install gnu-tar
       run: |
-        brew install llvm  # assume install under /usr/local/opt/llvm
+        brew install gnu-tar
+    - name: install gcc@11
+      run: |
+        brew install gcc@11
     - name: get llvm-project
       run: |
         wget -q https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VER/llvm-project-$LLVM_VER.src.tar.xz
         tar xf llvm-project-$LLVM_VER.src.tar.xz
         mv llvm-project-$LLVM_VER.src llvm-project-$LLVM_VER
+    - name: make build directory
+      run: mkdir -p llvm-project-$LLVM_VER/build
     - name: cmake
-      # see https://llvm.org/docs/HowToCrossCompileLLVM.html
       run: |
-        echo "BIN=$BIN" >> "$GITHUB_ENV"
-        echo "$BIN" >> "$GITHUB_PATH"
-        set echo
-        uname -a
-        cd llvm-project-$LLVM_VER
-        # note: LIBCXX_ENABLE_ASSERTIONS=FALSE is for the "undefined symbol: std::__1::__libcpp_verbose_abort(char const*, ...)" failure
-        cmake -S llvm \
-          -G "Unix Makefiles" -B build \
-          -DBUILD_SHARED_LIBS=OFF \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DCMAKE_CXX_COMPILER=$BIN/clang++ \
-          -DCMAKE_C_COMPILER=$BIN/clang \
-          -DCMAKE_INSTALL_PREFIX=$HOME/.local \
-          -DCMAKE_OSX_ARCHITECTURES=arm64 \
-          -DCMAKE_SYSTEM_NAME=Darwin \
-          -DDEFAULT_SYSROOT="$(xcrun --show-sdk-path)" \
-          -DLLVM_DEFAULT_TARGET_TRIPLE=18.1.1-arm64-apple-darwin21.6 \
-          -DLLVM_ENABLE_PIC=False \
+        cd llvm-project-$LLVM_VER/build
+        cmake ../llvm \
           -DLLVM_ENABLE_PROJECTS=clang \
-          -DLLVM_ENABLE_TERMINFO=OFF \
-          -DLLVM_ENABLE_WERROR=FALSE \
+          -DBUILD_SHARED_LIBS=OFF \
           -DLLVM_ENABLE_ZLIB=OFF \
           -DLLVM_ENABLE_ZSTD=OFF \
-          -DLLVM_NATIVE_TOOL_DIR=$BIN \
-          -DLLVM_USE_LINKER=lld \
-          -DLIBCXX_ENABLE_ASSERTIONS=FALSE \
-          -DLLVM_TARGETS_TO_BUILD=AArch64
+          -DLLVM_ENABLE_TERMINFO=OFF \
+          -DLLVM_TARGETS_TO_BUILD=AArch64 \
+          -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+          -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g -DNDEBUG -static-libgcc -static-libstdc++" \
+          -DCMAKE_C_COMPILER=$(brew --prefix gcc@11)/bin/gcc-11 \
+          -DCMAKE_CXX_COMPILER=$(brew --prefix gcc@11)/bin/g++-11 \
+          -DCMAKE_OSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET
     - name: build
+      run: cd llvm-project-$LLVM_VER/build && make libclang -j$(sysctl -n hw.ncpu)
+    - name: print dependencies
       run: |
-        cd llvm-project-$LLVM_VER 
-        cmake --build build --config Release --target libclang --parallel $(sysctl -n hw.ncpu)
-    - name: combine .a archives into dylib
-      run: |
-        cd llvm-project-$LLVM_VER/build/lib
-        set echo
-        # convert .a -> dylib
-        $BIN/clang -arch arm64 -fpic -shared  -lstdc++ -Wl,-force_load libclang.a *.a -o libclang.dylib
-        strip -u libclang.dylib
-        lipo -info libclang.dylib
-        du -csh libclang.dylib
-        file libclang.dylib
-        otool -L libclang.dylib
+        du -csh llvm-project-$LLVM_VER/build/lib/libclang.dylib
+        file llvm-project-$LLVM_VER/build/lib/libclang.dylib
+        otool -L llvm-project-$LLVM_VER/build/lib/libclang.dylib
         dyldinfo -platform -dependents libclang.dylib || true
     - name: create and print sha512sum
       run: |

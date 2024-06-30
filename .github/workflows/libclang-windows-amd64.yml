@@ -65,7 +65,7 @@ jobs:
         path: dist/*.whl
 
   upload-to-pypi:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs: [build-and-deploy]
     steps:
     - uses: actions/download-artifact@v4
