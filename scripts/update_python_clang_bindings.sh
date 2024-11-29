@@ -3,13 +3,12 @@ set -euo pipefail
 
 TOP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 
-LLVM_VERSION="${LLVM_VERSION:-18.1.1}"
+LLVM_VERSION="${LLVM_VERSION:-19.1.3}"
 LLVM_URL_PREFIX="https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-${LLVM_VERSION}/clang/bindings/python"
 
 LISTING=(
   "clang/__init__.py"
   "clang/cindex.py"
-  "clang/enumerations.py"
 )
 
 function run() {
