@@ -3975,7 +3975,7 @@ def register_functions(lib, ignore_errors):
 
 
 class Config:
-    library_path = os.environ.get("LIBCLANG_LIBRARY_PATH", os.path.join(os.path.dirname(os.path.realpath(__file__)), "native"))
+    library_path = os.environ.get("LIBCLANG_LIBRARY_PATH", os.path.join(os.path.dirname(os.path.realpath(__file__)), "native", "lib"))
     library_file = None
     compatibility_check = True
     loaded = False

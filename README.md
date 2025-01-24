@@ -47,7 +47,7 @@ Internals
 Update class variable `library_path` of `Config` in `cindex.py` as:
 
 ```python
-    library_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'native')
+    library_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'native', 'lib')
 ```
 
 License

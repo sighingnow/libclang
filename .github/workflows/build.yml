@@ -1,0 +1,253 @@
+name: CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip_qemu:
+        description: "Skip builds that require qemu (placeholder - not functional yet, qemu builds hit GHA timeout limit)"
+        type: boolean
+        required: false
+        default: false
+  pull_request:
+  push:
+    branches:
+      - main
+    tags:
+      - "*.*.*"
+
+concurrency:
+  group: ${{ github.repository }}-${{ github.head_ref || github.sha }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  build_wheels:
+    name: Build ${{ matrix.build }}${{ matrix.arch }} wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            arch: "x86_64"
+            build: "manylinux_"
+            artifact_suffix: "manylinux_x86_64"
+          - os: ubuntu-latest
+            arch: "x86_64"
+            build: "musllinux_"
+            artifact_suffix: "musllinux_x86_64"
+          - os: ubuntu-latest
+            arch: "i686"
+            build: "manylinux_"
+            artifact_suffix: "manylinux_i686"
+          - os: ubuntu-latest
+            arch: "i686"
+            build: "musllinux_"
+            artifact_suffix: "musllinux_i686"
+          - os: ubuntu-24.04-arm
+            arch: "aarch64"
+            build: "manylinux_"
+            artifact_suffix: "manylinux_aarch64"
+          - os: ubuntu-24.04-arm
+            arch: "aarch64"
+            build: "musllinux_"
+            artifact_suffix: "musllinux_aarch64"
+          - os: ubuntu-24.04-arm
+            arch: "armv7l"
+            build: "manylinux_"
+            artifact_suffix: "manylinux_armv7l"
+          - os: ubuntu-24.04-arm
+            arch: "armv7l"
+            build: "musllinux_"
+            artifact_suffix: "musllinux_armv7l"
+          # - os: ubuntu-latest
+          #   arch: "ppc64le"
+          #   build: "manylinux_"
+          #   artifact_suffix: "manylinux_ppc64le"
+          #   use_qemu: true
+          # - os: ubuntu-latest
+          #   arch: "ppc64le"
+          #   build: "musllinux_"
+          #   artifact_suffix: "musllinux_ppc64le"
+          #   use_qemu: true
+          # - os: ubuntu-latest
+          #   arch: "s390x"
+          #   build: "manylinux_"
+          #   artifact_suffix: "manylinux_s390x"
+          #   use_qemu: true
+          # - os: ubuntu-latest
+          #   arch: "s390x"
+          #   build: "musllinux_"
+          #   artifact_suffix: "musllinux_s390x"
+          #   use_qemu: true
+          - os: windows-latest
+            arch: "AMD64"
+            artifact_suffix: "windows_x86_64"
+          - os: windows-latest
+            arch: "x86"
+            artifact_suffix: "windows_x86"
+          - os: windows-latest
+            arch: "ARM64"
+            artifact_suffix: "windows_arm64"
+          - os: macos-14
+            arch: "x86_64"
+            artifact_suffix: "macos_x86_64"
+          - os: macos-14
+            arch: "arm64"
+            artifact_suffix: "macos_arm64"
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # ensure history is present for automatic versioning
+
+      - name: Support long paths on Windows
+        if: runner.os == 'Windows'
+        run: git config --system core.longpaths true
+
+      - name: Build tblgen for Windows ARM64 cross-compilation
+        if: runner.os == 'Windows' && matrix.arch == 'ARM64'
+        run: |
+          $env:LLVM_VER = (Get-Content .\llvm_version.cmake | Select-String 'set\(LLVM_VERSION (.*?)\)').Matches.Groups[1].Value.Trim()
+          git clone https://github.com/llvm/llvm-project.git llvm-project-$env:LLVM_VER -b llvmorg-$env:LLVM_VER --depth=1
+          mkdir -p llvm-project-$env:LLVM_VER/build
+          cd llvm-project-$env:LLVM_VER/build
+          cmake ../llvm `
+            -Thost=x64 `
+            -DLLVM_ENABLE_PROJECTS=clang `
+            -DBUILD_SHARED_LIBS=OFF `
+            -DLLVM_ENABLE_ZLIB=OFF `
+            -DLLVM_ENABLE_ZSTD=OFF `
+            -DLLVM_ENABLE_TERMINFO=OFF `
+            -DLLVM_TARGETS_TO_BUILD=X86 `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DCMAKE_CXX_FLAGS="/MP" `
+            -DLLVM_USE_CRT_MINSIZEREL="MT"
+          cmake --build . --config Release --target clang-tblgen
+          cmake --build . --config Release --target llvm-tblgen
+          cd Release
+          mkdir C:\llvm
+          cp bin\clang-tblgen.exe C:\llvm
+          cp bin\llvm-tblgen.exe C:\llvm
+
+      - name: Set up msvc on Windows
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ runner.os == 'Windows' && matrix.arch != 'ARM64' && matrix.arch || 'amd64_arm64' }}
+
+      # Note: need a newer version of QEMU to avoid failures that recently started happening
+      - name: Set up QEMU
+        if: runner.os == 'Linux' && matrix.use_qemu
+        uses: docker/setup-qemu-action@v3.3.0
+        with:
+          image: tonistiigi/binfmt:qemu-v8.1.5
+
+      - name: Install ninja (macOS)
+        if: runner.os == 'macOS'
+        run: which ninja || brew install ninja
+
+      - name: Install pipx (macOS)
+        if: runner.os == 'macOS'
+        run: which pipx || brew install pipx
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.22.0
+        env:
+          CIBW_ARCHS: "${{ matrix.arch }}"
+          CIBW_BUILD: "cp39-${{ matrix.build || '' }}*"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: artifact-${{matrix.artifact_suffix}}
+          path: ./wheelhouse/*.whl
+
+      
+      - name: Print dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          for wheel in ./wheelhouse/*.whl; do
+            echo "Analyzing $wheel"
+            unzip "$wheel" -d wheel_contents
+            if [ -f wheel_contents/clang/native/lib/libclang.so ]; then
+              du -csh wheel_contents/clang/native/lib/libclang.so || true
+              ldd wheel_contents/clang/native/lib/libclang.so || true
+              file wheel_contents/clang/native/lib/libclang.so || true
+              strings wheel_contents/clang/native/lib/libclang.so | grep GLIBC
+              nm --dynamic --undefined-only --with-symbol-versions wheel_contents/clang/native/lib/libclang.so || true
+            fi
+            rm -rf wheel_contents
+          done
+
+      - name: Print dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          for wheel in ./wheelhouse/*.whl; do
+            echo "Analyzing $wheel"
+            unzip "$wheel" -d wheel_contents
+            if [ -f wheel_contents/clang/native/lib/libclang.dylib ]; then
+              du -csh wheel_contents/clang/native/lib/libclang.dylib || true
+              file wheel_contents/clang/native/lib/libclang.dylib || true
+              otool -L wheel_contents/clang/native/lib/libclang.dylib || true
+              dyldinfo -platform -dependents libclang.dylib || true
+              lipo -info wheel_contents/clang/native/lib/libclang.dylib || true
+            fi
+            rm -rf wheel_contents
+          done
+
+      - name: Print dependencies (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          for wheel in ./wheelhouse/*.whl; do
+            echo "Analyzing $wheel"
+            7z x -y "$wheel" -owheel_contents
+            if [ -f wheel_contents/clang/native/lib/libclang.dll ]; then
+              file wheel_contents/clang/native/lib/libclang.dll || true
+            fi
+            rm -rf wheel_contents
+          done
+
+  build_sdist:
+    name: Build source distributions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # ensure history is present for automatic versioning
+
+      - name: Build SDist
+        run: pipx run build --sdist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: artifact-sdist
+          path: dist/*.tar.gz
+
+  check_dist:
+    name: Check dist
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - run: pipx run twine check --strict dist/*
+
+  pypi-publish:
+    name: Upload release to PyPI
+    runs-on: ubuntu-latest
+    needs: [build_wheels, build_sdist, check_dist]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+    environment:
+      name: pypi
+      url: https://pypi.org/p/libclang
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+    steps:
+    - name: Download Python package dist artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: dist
+        merge-multiple: true
+    - name: Publish package distributions to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
