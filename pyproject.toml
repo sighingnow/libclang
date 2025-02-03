@@ -1,0 +1,86 @@
+[build-system]
+requires = ["scikit-build-core"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "libclang"
+dynamic = ["version"]
+description = "Clang Python Bindings, mirrored from the official LLVM repo: https://github.com/llvm/llvm-project/tree/main/clang/bindings/python, to make the installation process easier."
+readme = "README.md"
+readme-content-type = "text/markdown"
+authors = [
+    { name = "Tao He", email = "sighingnow@gmail.com" }
+]
+license = { text = "Apache License 2.0" }
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Compilers",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 2",
+    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.3",
+    "Programming Language :: Python :: 3.4",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: Apache Software License"
+]
+keywords = ["Clang", "Python", "Bindings"]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/sighingnow/libclang"
+Documentation = "https://libclang.readthedocs.io"
+"Source Code" = "https://github.com/sighingnow/libclang"
+"Issue Tracker" = "https://github.com/sighingnow/libclang/issues"
+
+[tool.scikit-build.metadata.version]
+provider = "scikit_build_core.metadata.regex"
+regex = '^set\(LLVM_VERSION\s+(?P<value>\d+\.\d+\.\d+)\)'
+input = "llvm_version.cmake"
+
+[tool.scikit-build]
+wheel.packages = ["python/clang"]
+wheel.install-dir = "clang/native"
+wheel.py-api = "py2.py3"
+# ensure that only libclang shared library gets installed
+# install.components = ["libclang"]
+cmake.version = ">=3.18.0"
+ninja.version = ">=1.10.0"
+# armv7l Linux images don't have a version of ninja that gets found?
+ninja.make-fallback = false
+cmake.build-type = "Release"
+# scikit-build-core sets install.strip to true for Release builds
+install.strip = true
+build.verbose = true
+logging.level = "DEBUG"
+
+[tool.cibuildwheel]
+test-command = [
+  "python -c \"from clang.cindex import conf; conf.lib; print(conf.get_filename()); assert(conf.loaded)\"",
+]
+build-verbosity = 3
+# Use Ninja on all platforms (Windows uses MSVC by default)
+environment.CMAKE_GENERATOR = "Ninja"
+environment.PIP_ONLY_BINARY = ":all:"
+
+[tool.cibuildwheel.linux]
+manylinux-x86_64-image = "manylinux2010"
+manylinux-i686-image = "manylinux2010"
+
+[[tool.cibuildwheel.overrides]]
+select = "*-win_arm64"
+config-settings."cmake.define.LLVM_TABLEGEN" = "C:/llvm/llvm-tblgen.exe"
+config-settings."cmake.define.CLANG_TABLEGEN" = "C:/llvm/clang-tblgen.exe"
+config-settings."cmake.define.LLVM_TARGETS_TO_BUILD" = "AArch64"
+config-settings."cmake.define.CMAKE_SYSTEM_NAME" = "Windows"
