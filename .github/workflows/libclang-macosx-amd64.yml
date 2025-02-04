@@ -19,9 +19,9 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.10'
-    - name: install wheel dependencies
+    - name: install setuptools dependencies
       run: |
-        pip3 install wheel
+        pip3 install -U setuptools==75.8.0
     - name: install gnu-tar
       run: |
         brew install gnu-tar

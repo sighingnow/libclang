@@ -7,7 +7,7 @@ from distutils.command.build import build
 from distutils.dir_util import mkpath
 from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext
-from wheel.bdist_wheel import get_platform, bdist_wheel
+from setuptools.command.bdist_wheel import get_platform, bdist_wheel
 
 
 def platform_ext(plat):
